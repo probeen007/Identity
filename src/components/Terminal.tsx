@@ -1,18 +1,18 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { CommandOutput, Command } from '@/types';
+import { CommandOutput, Command as CommandType } from '@/types';
 import TerminalOutput from './TerminalOutput';
 import TerminalPrompt from './TerminalPrompt';
 import { motion } from 'framer-motion';
 import { 
-  Activity, Briefcase, Code, Command, FileText, 
+  Activity, Briefcase, Code, Command as CommandIcon, FileText, 
   Info, Mail, Home, User, Monitor, 
   Award, BookOpen, Download, Coffee
 } from 'lucide-react';
 
 interface TerminalProps {
   welcomeMessage: string;
-  availableCommands: Command[];
+  availableCommands: CommandType[];
 }
 
 interface CommandHistoryItem {
@@ -129,7 +129,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands }
       {/* Terminal Sidebar */}
       <div className="terminal-sidebar w-40 hidden sm:block">
         <div className="p-2 border-b border-terminal-accent/30 flex items-center justify-center">
-          <Command size={16} className="mr-2 text-terminal-accent" />
+          <CommandIcon size={16} className="mr-2 text-terminal-accent" />
           <span className="font-bold text-terminal-accent">Commands</span>
         </div>
         <div className="p-2 space-y-1">
