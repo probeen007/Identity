@@ -118,14 +118,32 @@
 
   /* Terminal sidebar styling */
   .terminal-sidebar {
-    @apply bg-terminal-background/90 border-r border-terminal-accent/30 h-full;
+    @apply h-full;
   }
 
   .terminal-sidebar-item {
-    @apply px-3 py-2 hover:bg-terminal-accent/10 cursor-pointer transition-all rounded-md flex items-center gap-2;
+    @apply cursor-pointer transition-all rounded-md flex items-center gap-2;
   }
 
   .terminal-sidebar-item.active {
-    @apply bg-terminal-accent/20 text-terminal-accent;
+    @apply text-terminal-foreground;
+  }
+  
+  /* Terminal scrollbar styling */
+  .scrollbar-none::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar-thumb {
+    @apply bg-terminal-accent/30 rounded-full;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar-thumb:hover {
+    @apply bg-terminal-accent/60;
   }
 }

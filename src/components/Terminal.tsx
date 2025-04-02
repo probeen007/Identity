@@ -127,19 +127,20 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands }
       className="w-full h-full bg-terminal-background text-terminal-foreground rounded-md overflow-hidden flex"
     >
       {/* Terminal Sidebar */}
-      <div className="terminal-sidebar w-40 hidden sm:block">
-        <div className="p-2 border-b border-terminal-accent/30 flex items-center justify-center">
-          <CommandIcon size={16} className="mr-2 text-terminal-accent" />
-          <span className="font-bold text-terminal-accent">Commands</span>
+      <div className="terminal-sidebar w-40 hidden sm:block bg-black/30 border-r border-terminal-accent/40">
+        <div className="p-2 border-b border-terminal-accent/40 flex items-center justify-center bg-black/40">
+          <CommandIcon size={16} className="mr-2 text-terminal-foreground" />
+          <span className="font-bold text-terminal-foreground">Commands</span>
         </div>
-        <div className="p-2 space-y-1">
+        <div className="p-2 space-y-1 overflow-y-auto max-h-[calc(100vh-12rem)]">
           {sidebarItems.map((item) => (
             <div 
               key={item.id}
-              className={`terminal-sidebar-item ${activeSection === item.command ? 'active' : ''}`}
+              className={`terminal-sidebar-item ${activeSection === item.command ? 'active bg-terminal-accent/20 text-terminal-foreground' : 'text-terminal-foreground/70 hover:bg-black/40 hover:text-terminal-foreground'} 
+                px-3 py-2 rounded-md transition-all duration-200 cursor-pointer flex items-center gap-2 border border-transparent hover:border-terminal-accent/30`}
               onClick={() => handleCommand(item.command)}
             >
-              {item.icon}
+              <span className="text-terminal-accent">{item.icon}</span>
               <span>{item.label}</span>
             </div>
           ))}
@@ -148,7 +149,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands }
       
       {/* Terminal Content */}
       <div className="flex-1 flex flex-col">
-        <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm text-terminal-muted">
+        <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm text-terminal-muted bg-black/40">
           {activeSection ? `terminal@portfolio:~/${activeSection}` : 'terminal@portfolio:~'}
         </div>
         
