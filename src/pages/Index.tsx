@@ -54,7 +54,7 @@ const Index = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.4 }}
-              className="w-full max-w-4xl h-[80vh] rounded-lg border border-terminal-accent shadow-lg overflow-hidden"
+              className="w-full max-w-5xl h-[80vh] rounded-lg border border-terminal-accent shadow-lg overflow-hidden"
             >
               <div className="bg-terminal-accent px-4 py-2 flex items-center">
                 <div className="flex gap-2 mr-4">
@@ -80,7 +80,7 @@ const Index = () => {
       
       <footer className="p-4 text-center text-terminal-accent text-sm z-10 relative">
         <p className="glitch-effect">
-          {showTerminal ? "Type 'help' for available commands" : "Click Open Terminal to begin"}
+          {showTerminal ? "Type 'help' for available commands or use the sidebar" : "Click Open Terminal to begin"}
         </p>
       </footer>
     </div>
