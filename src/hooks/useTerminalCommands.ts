@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Command } from '@/types';
 import {
@@ -24,6 +23,13 @@ const useTerminalCommands = () => {
   const [welcomeMessage, setWelcomeMessage] = useState('');
   const [currentTheme, setCurrentTheme] = useState<string>('hacker');
 
+  // Function to apply theme to the document
+  const applyTheme = (themeName: string) => {
+    document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-hacker');
+    document.documentElement.classList.add(`theme-${themeName}`);
+    localStorage.setItem('portfolio-theme', themeName);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const art = await getAsciiArt();
@@ -33,6 +39,12 @@ const useTerminalCommands = () => {
       setAsciiArt(art);
       setHelpContent(help);
       setCurrentTheme(theme.name);
+      
+      // Apply the theme from local storage or default
+      const savedTheme = localStorage.getItem('portfolio-theme') || theme.name;
+      applyTheme(savedTheme);
+      setCurrentTheme(savedTheme);
+      
       setWelcomeMessage(`${art}\n\nWelcome to the terminal portfolio!\nType 'help' to see available commands.`);
     };
 
@@ -299,8 +311,9 @@ const useTerminalCommands = () => {
             const newTheme = await setTheme(theme);
             setCurrentTheme(newTheme.name);
             
-            // In a real implementation, we would apply the theme here
-            // For this demo, we'll just return a success message
+            // Apply the theme to the document
+            applyTheme(newTheme.name);
+            
             return {
               type: 'success',
               content: `

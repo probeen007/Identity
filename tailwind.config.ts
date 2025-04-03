@@ -54,14 +54,14 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				terminal: {
-					background: '#0d1117',
-					foreground: '#00FF00', // Neon green
-					accent: '#1C8CFF', // Bright blue
-					muted: '#505050',
-					success: '#00FF00',
-					warning: '#FFA500',
-					error: '#FF0000',
-					info: '#1C8CFF',
+					background: 'var(--terminal-background)',
+					foreground: 'var(--terminal-foreground)', 
+					accent: 'var(--terminal-accent)',
+					muted: 'var(--terminal-muted)',
+					success: 'var(--terminal-success)',
+					warning: 'var(--terminal-warning)',
+					error: 'var(--terminal-error)',
+					info: 'var(--terminal-info)',
 				},
 				hacker: {
 					dark: '#0d1117',
