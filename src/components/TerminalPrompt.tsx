@@ -16,6 +16,7 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,7 +36,15 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
         cmd.toLowerCase().startsWith(value.toLowerCase())
       );
       setSuggestions(filtered);
+      setSelectedSuggestion(0);
     } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleTabCompletion = () => {
+    if (suggestions.length > 0) {
+      setInput(suggestions[selectedSuggestion]);
       setSuggestions([]);
     }
   };
@@ -71,55 +80,54 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      if (suggestions.length > 0) {
-        setInput(suggestions[0]);
-        setSuggestions([]);
-      }
+      handleTabCompletion();
     }
+  };
+
+  // Get the suggestion part that would be completed
+  const getSuggestionCompletion = () => {
+    if (suggestions.length > 0 && input) {
+      return suggestions[selectedSuggestion].slice(input.length);
+    }
+    return '';
   };
 
   return (
     <div className="flex items-center mt-2 group">
       <span className="terminal-prompt mr-2">visitor@portfolio:~$</span>
       <div className="relative flex-grow">
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          className="w-full bg-transparent outline-none terminal-command caret-transparent"
-          disabled={isLoading}
-          aria-label="Terminal command input"
-          autoComplete="off"
-          autoFocus
-        />
-        {!input && (
-          <span className="terminal-cursor absolute left-0 top-0.5"></span>
-        )}
-        {input && (
-          <span className="terminal-cursor absolute top-0.5" style={{ left: `${input.length}ch` }}></span>
-        )}
-      </div>
-      {suggestions.length > 0 && (
-        <div className="absolute mt-1 py-1 bg-terminal-background border border-terminal-accent rounded-md shadow-lg z-10" style={{ top: '100%' }}>
-          {suggestions.map((suggestion, index) => (
-            <div 
-              key={index}
-              className="px-3 py-1 hover:bg-terminal-accent hover:text-terminal-background cursor-pointer"
-              onClick={() => {
-                setInput(suggestion);
-                setSuggestions([]);
-                if (inputRef.current) {
-                  inputRef.current.focus();
-                }
-              }}
-            >
-              {suggestion}
-            </div>
-          ))}
+        <div className="flex">
+          <div className="flex-grow">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              className="w-full bg-transparent outline-none terminal-command"
+              disabled={isLoading}
+              aria-label="Terminal command input"
+              autoComplete="off"
+              autoFocus
+              style={{ caretColor: 'transparent' }}
+            />
+            {/* Inline suggestion */}
+            {suggestions.length > 0 && (
+              <span className="absolute left-0 top-0 text-terminal-accent/40 pointer-events-none">
+                {input}{getSuggestionCompletion()}
+              </span>
+            )}
+            
+            {/* Cursor positioning */}
+            {!input && (
+              <span className="terminal-cursor absolute left-0 top-0.5"></span>
+            )}
+            {input && (
+              <span className="terminal-cursor absolute top-0.5" style={{ left: `${input.length}ch` }}></span>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

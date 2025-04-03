@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -114,19 +113,6 @@
   @keyframes caretBlink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
-  }
-
-  /* Terminal sidebar styling */
-  .terminal-sidebar {
-    @apply h-full;
-  }
-
-  .terminal-sidebar-item {
-    @apply cursor-pointer transition-all rounded-md flex items-center gap-2;
-  }
-
-  .terminal-sidebar-item.active {
-    @apply text-terminal-foreground;
   }
   
   /* Terminal scrollbar styling */
