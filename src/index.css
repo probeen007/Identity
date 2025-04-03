@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -126,12 +127,10 @@
   }
   
   .scrollbar-none::-webkit-scrollbar-thumb {
-    /* Replace opacity notation with custom bg utility */
     @apply bg-terminal-accent/30 rounded-full;
   }
   
   .scrollbar-none::-webkit-scrollbar-thumb:hover {
-    /* Replace opacity notation with custom bg utility */
     @apply bg-terminal-accent/60;
   }
 
