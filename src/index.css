@@ -133,4 +133,142 @@
   .scrollbar-none::-webkit-scrollbar-thumb:hover {
     @apply bg-terminal-accent/60;
   }
+
+  /* Enhanced Terminal Output Styling */
+  .terminal-output a {
+    @apply text-terminal-accent underline cursor-pointer;
+  }
+
+  .terminal-output h1, 
+  .terminal-output h2, 
+  .terminal-output h3 {
+    @apply font-bold text-terminal-accent;
+  }
+
+  .terminal-output h1 {
+    @apply text-xl mb-2;
+  }
+
+  .terminal-output h2 {
+    @apply text-lg mb-1;
+  }
+
+  .terminal-output h3 {
+    @apply text-base mb-1;
+  }
+
+  .terminal-output ul {
+    @apply list-disc pl-4 mb-2;
+  }
+
+  .terminal-output ol {
+    @apply list-decimal pl-4 mb-2;
+  }
+
+  .terminal-output code {
+    @apply bg-black/30 px-1 py-0.5 rounded text-terminal-success;
+  }
+
+  .terminal-output pre {
+    @apply bg-black/30 p-2 my-2 rounded overflow-x-auto;
+  }
+
+  /* Terminal Matrix Animation */
+  .terminal-matrix-animation {
+    @apply relative overflow-hidden rounded bg-black;
+  }
+
+  .matrix-code-rain {
+    @apply text-terminal-success;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 10px;
+    animation: matrix-rain 10s linear infinite;
+  }
+
+  @keyframes matrix-rain {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+
+  /* Hacking Animation */
+  .hack-animation {
+    @apply bg-black/50 rounded font-mono text-terminal-success overflow-hidden;
+  }
+
+  .hack-text {
+    @apply animate-hack-text;
+  }
+
+  @keyframes hackText {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Theme Styles */
+  .theme-light {
+    --terminal-background: #f9fafb;
+    --terminal-foreground: #333333;
+    --terminal-accent: #3b82f6;
+    --terminal-success: #10b981;
+    --terminal-warning: #f59e0b;
+    --terminal-error: #ef4444;
+    --terminal-info: #3b82f6;
+    --terminal-muted: #6b7280;
+  }
+
+  .theme-dark {
+    --terminal-background: #1e293b;
+    --terminal-foreground: #e2e8f0;
+    --terminal-accent: #3b82f6;
+    --terminal-success: #10b981;
+    --terminal-warning: #f59e0b;
+    --terminal-error: #ef4444;
+    --terminal-info: #3b82f6;
+    --terminal-muted: #94a3b8;
+  }
+
+  .theme-hacker {
+    --terminal-background: #0d1117;
+    --terminal-foreground: #00FF00;
+    --terminal-accent: #1C8CFF;
+    --terminal-success: #00FF00;
+    --terminal-warning: #FFA500;
+    --terminal-error: #FF0000;
+    --terminal-info: #1C8CFF;
+    --terminal-muted: #505050;
+  }
+}
+
+/* Table styling for admin panel */
+.admin-table {
+  @apply w-full text-left;
+}
+
+.admin-table th {
+  @apply py-2 px-4 bg-hacker-dark text-terminal-accent font-bold;
+}
+
+.admin-table td {
+  @apply py-2 px-4 border-b border-hacker-dark;
+}
+
+.admin-table tr:hover {
+  @apply bg-hacker-dark/50;
+}
+
+/* Form styling for admin panel */
+.admin-input {
+  @apply w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded focus:outline-none focus:ring-1 focus:ring-terminal-accent;
+}
+
+/* Animation for hacking text */
+@keyframes hackTextTyping {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.animate-hack-text {
+  @apply overflow-hidden whitespace-nowrap;
+  animation: hackTextTyping 2s steps(40) forwards;
 }

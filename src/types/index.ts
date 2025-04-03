@@ -46,7 +46,7 @@ export interface Recommendation {
 }
 
 export interface CommandOutput {
-  type: 'text' | 'error' | 'success' | 'warning' | 'info' | 'ascii' | 'json' | 'html';
+  type: 'text' | 'error' | 'success' | 'warning' | 'info' | 'ascii' | 'json' | 'html' | 'profile' | 'projects' | 'skills' | 'experience' | 'certificates' | 'recommendations' | 'contact' | 'funfact';
   content: string | React.ReactNode;
 }
 
