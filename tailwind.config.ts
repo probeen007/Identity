@@ -1,5 +1,6 @@
 
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
 	darkMode: ["class"],
@@ -119,5 +120,22 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		plugin(function({ addUtilities, theme }) {
+			// Add utilities for terminal-accent with opacity
+			const colors = theme('colors');
+			const newUtilities = {};
+			
+			if (colors.terminal && colors.terminal.accent) {
+				for (let opacity = 10; opacity <= 90; opacity += 10) {
+					newUtilities[`.bg-terminal-accent\\/${opacity}`] = {
+						backgroundColor: `color-mix(in srgb, var(--terminal-accent) ${opacity}%, transparent)`
+					};
+				}
+			}
+			
+			addUtilities(newUtilities);
+		})
+	],
 } satisfies Config;
