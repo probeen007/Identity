@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,7 +94,7 @@
 
   /* Enhanced Terminal Styling */
   .terminal-output-content {
-    @apply rounded px-2 py-1;
+    @apply rounded px-2 py-1 break-words;
   }
 
   .terminal-output-content .line {
