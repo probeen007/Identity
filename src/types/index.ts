@@ -1,4 +1,11 @@
 
+// Extend Window interface to include downloadResume function
+declare global {
+  interface Window {
+    downloadResume: () => void;
+  }
+}
+
 export interface Project {
   id: string;
   title: string;

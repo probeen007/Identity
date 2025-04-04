@@ -60,6 +60,16 @@ const useTerminalCommands = () => {
   useEffect(() => {
     if (!asciiArt || !helpContent) return;
 
+    // Add global window function for resume download
+    window.downloadResume = async () => {
+      try {
+        const message = await downloadResume();
+        console.log("Resume download initiated:", message);
+      } catch (error) {
+        console.error("Error downloading resume:", error);
+      }
+    };
+
     const commandsList: Command[] = [
       {
         command: 'about',
@@ -261,7 +271,10 @@ const useTerminalCommands = () => {
                 <p>Your browser should start downloading the resume file shortly.</p>
                 <p className="text-terminal-muted text-sm mt-2">
                   If the download doesn't start automatically, 
-                  <a href="#" className="text-terminal-accent hover:underline ml-1" onClick={() => window.downloadResume()}>
+                  <a href="#" className="text-terminal-accent hover:underline ml-1" onClick={(e) => {
+                    e.preventDefault();
+                    window.downloadResume();
+                  }}>
                     click here
                   </a>.
                 </p>
