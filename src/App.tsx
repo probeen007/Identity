@@ -1,9 +1,9 @@
 
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Index } from './pages/Index';
-import { Admin } from './pages/Admin';
-import { NotFound } from './pages/NotFound';
+import Index from './pages/Index';
+import Admin from './pages/Admin';
+import NotFound from './pages/NotFound';
 import { Toaster } from './components/ui/toaster';
 import { initializeDatabase } from './services/dataService';
 import { toast } from 'sonner';
