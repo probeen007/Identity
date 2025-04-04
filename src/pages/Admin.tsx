@@ -1100,40 +1100,40 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-hacker-background text-hacker-foreground p-4">
       {!authenticated ? (
-        <div className="max-w-md mx-auto mt-16 p-6 bg-hacker-light rounded shadow">
-          <h1 className="text-2xl font-bold text-center mb-6">Admin Login</h1>
+        <div className="max-w-md mx-auto mt-16 p-6 bg-hacker-light rounded shadow-lg border border-terminal-accent">
+          <h1 className="text-2xl font-bold text-center mb-6 text-terminal-accent">Admin Login</h1>
           <form onSubmit={handleLogin}>
             <div className="space-y-4">
               <div>
-                <label className="block mb-1">Username</label>
+                <label className="block mb-1 text-terminal-foreground">Username</label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded focus:ring-2 focus:ring-terminal-accent/50 focus:outline-none"
                   required
                 />
               </div>
               <div>
-                <label className="block mb-1">Password</label>
+                <label className="block mb-1 text-terminal-foreground">Password</label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded focus:ring-2 focus:ring-terminal-accent/50 focus:outline-none"
                   required
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                className="w-full p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition font-bold"
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>
-              <div className="text-xs text-center text-terminal-muted">
+              <div className="text-xs text-center text-terminal-foreground bg-hacker-dark p-2 rounded">
                 <p>Demo credentials:</p>
-                <p>Username: admin / Password: password</p>
+                <p className="font-bold">Username: admin / Password: password</p>
               </div>
             </div>
           </form>
