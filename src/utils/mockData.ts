@@ -15,6 +15,7 @@ export const mockAbout: About = {
   bio: "I'm a passionate developer with expertise in building robust web applications. I specialize in React, Node.js, and modern web technologies. When I'm not coding, I enjoy hiking and playing chess.",
   location: "San Francisco, CA",
   email: "john.doe@example.com",
+  profileImageUrl: "/placeholder.svg", // Added profileImageUrl property
   socialLinks: {
     github: "https://github.com/johndoe",
     linkedin: "https://linkedin.com/in/johndoe",
