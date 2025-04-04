@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Command } from '@/types';
 import {
   getAbout,
@@ -519,3 +518,4 @@ const useTerminalCommands = () => {
 };
 
 export default useTerminalCommands;
+```</lov-code>

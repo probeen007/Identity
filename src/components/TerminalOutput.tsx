@@ -368,7 +368,7 @@ const TerminalOutput: React.FC<TerminalOutputProps> = ({ output }) => {
       // Process and render the structured content
       return renderStructuredContent(output.content);
     }
-    return output.content;
+    return output.content; // Return React element directly if content is not a string
   };
 
   return (
