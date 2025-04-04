@@ -1,18 +1,3 @@
-
-import {
-  mockAbout,
-  mockProjects,
-  mockSkills,
-  mockExperiences,
-  mockCertificates,
-  mockRecommendations,
-  mockFunFacts,
-  asciiArt,
-  helpContent,
-  notFoundContent,
-  welcomeMessage
-} from '@/utils/mockData';
-
 import { 
   About, 
   Project, 
@@ -23,20 +8,11 @@ import {
   FunFact,
   ThemeConfig
 } from '@/types';
+import { supabase, handleSupabaseError } from '@/lib/supabase';
+import { mockAbout, mockProjects, mockSkills, mockExperiences, mockCertificates, 
+  mockRecommendations, mockFunFacts, asciiArt, helpContent, notFoundContent, welcomeMessage } from '@/utils/mockData';
 
-// Mock database for demo purposes
-let aboutData = { 
-  ...mockAbout, 
-  profileImageUrl: '/placeholder.svg' // Set a default value instead of empty string
-};
-let projectsData = [...mockProjects];
-let skillsData = [...mockSkills];
-let experiencesData = [...mockExperiences];
-let certificatesData = [...mockCertificates];
-let recommendationsData = [...mockRecommendations];
-let funFactsData = [...mockFunFacts];
-
-// Theme storage
+// Theme storage (stays in local storage for better performance)
 let currentTheme: ThemeConfig = {
   name: 'hacker',
   backgroundColor: '#0d1117',
@@ -44,243 +20,561 @@ let currentTheme: ThemeConfig = {
   accentColor: '#1C8CFF'
 };
 
-// In a real app, these would be API calls to your backend
+// Helper function to initialize DB with mock data if needed
+export const initializeDatabase = async () => {
+  try {
+    // Check if we have any data in the About table
+    const { count, error } = await supabase
+      .from('about')
+      .select('*', { count: 'exact', head: true });
+    
+    if (error) throw error;
+    
+    // If no data exists, seed the database with mock data
+    if (count === 0) {
+      console.log("Seeding database with initial data...");
+      
+      // Insert About data
+      await supabase.from('about').insert([mockAbout]);
+      
+      // Insert Projects data
+      await supabase.from('projects').insert(mockProjects);
+      
+      // Insert Skills data
+      await supabase.from('skills').insert(mockSkills);
+      
+      // Insert Experiences data
+      await supabase.from('experiences').insert(mockExperiences);
+      
+      // Insert Certificates data
+      await supabase.from('certificates').insert(mockCertificates);
+      
+      // Insert Recommendations data
+      await supabase.from('recommendations').insert(mockRecommendations);
+      
+      // Insert FunFacts data
+      await supabase.from('funfacts').insert(mockFunFacts);
+      
+      console.log("Database seeded successfully");
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error initializing database:", error);
+    // Continue with the app even if initialization fails
+    return false;
+  }
+};
+
+// About data operations
 export const getAbout = async (): Promise<About> => {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return aboutData;
+  try {
+    const { data, error } = await supabase
+      .from('about')
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return data as About;
+  } catch (error) {
+    console.error("Error fetching about data:", error);
+    // Fallback to mock data if database fails
+    return mockAbout;
+  }
 };
 
 export const updateAbout = async (data: About): Promise<About> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  aboutData = { ...data };
-  return aboutData;
+  try {
+    // First check if about data exists
+    const existingData = await getAbout();
+    
+    if (existingData) {
+      // Update existing record
+      const { data: updatedData, error } = await supabase
+        .from('about')
+        .update(data)
+        .eq('email', data.email)  // Use email as a unique identifier
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return updatedData as About;
+    } else {
+      // Insert new record
+      const { data: newData, error } = await supabase
+        .from('about')
+        .insert([data])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return newData as About;
+    }
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update about data") || mockAbout;
+  }
 };
 
+// Projects data operations
 export const getProjects = async (): Promise<Project[]> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return projectsData;
+  try {
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    return data as Project[];
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return mockProjects;
+  }
 };
 
 export const updateProject = async (id: string, data: Partial<Project>): Promise<Project> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = projectsData.findIndex(project => project.id === id);
-  if (index === -1) throw new Error('Project not found');
-  
-  projectsData[index] = { ...projectsData[index], ...data };
-  return projectsData[index];
+  try {
+    const { data: updatedData, error } = await supabase
+      .from('projects')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return updatedData as Project;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update project") || mockProjects[0];
+  }
 };
 
 export const addProject = async (data: Omit<Project, 'id'>): Promise<Project> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const newProject = { 
-    ...data, 
-    id: `project-${Date.now()}` 
-  };
-  projectsData.push(newProject);
-  return newProject;
+  try {
+    const newProject = { 
+      ...data, 
+      id: `project-${Date.now()}` 
+    };
+    
+    const { data: createdData, error } = await supabase
+      .from('projects')
+      .insert([newProject])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return createdData as Project;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to add project") || mockProjects[0];
+  }
 };
 
 export const deleteProject = async (id: string): Promise<void> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = projectsData.findIndex(project => project.id === id);
-  if (index === -1) throw new Error('Project not found');
-  
-  projectsData.splice(index, 1);
+  try {
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, "Failed to delete project");
+  }
 };
 
+// Skills data operations
 export const getSkills = async (): Promise<Skill[]> => {
-  await new Promise(resolve => setTimeout(resolve, 400));
-  return skillsData;
+  try {
+    const { data, error } = await supabase
+      .from('skills')
+      .select('*')
+      .order('name');
+    
+    if (error) throw error;
+    return data as Skill[];
+  } catch (error) {
+    console.error("Error fetching skills:", error);
+    return mockSkills;
+  }
 };
 
 export const updateSkill = async (id: string, data: Partial<Skill>): Promise<Skill> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = skillsData.findIndex(skill => skill.id === id);
-  if (index === -1) throw new Error('Skill not found');
-  
-  skillsData[index] = { ...skillsData[index], ...data };
-  return skillsData[index];
+  try {
+    const { data: updatedData, error } = await supabase
+      .from('skills')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return updatedData as Skill;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update skill") || mockSkills[0];
+  }
 };
 
 export const addSkill = async (data: Omit<Skill, 'id'>): Promise<Skill> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const newSkill = { 
-    ...data, 
-    id: `skill-${Date.now()}` 
-  };
-  skillsData.push(newSkill);
-  return newSkill;
+  try {
+    const newSkill = { 
+      ...data, 
+      id: `skill-${Date.now()}` 
+    };
+    
+    const { data: createdData, error } = await supabase
+      .from('skills')
+      .insert([newSkill])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return createdData as Skill;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to add skill") || mockSkills[0];
+  }
 };
 
 export const deleteSkill = async (id: string): Promise<void> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = skillsData.findIndex(skill => skill.id === id);
-  if (index === -1) throw new Error('Skill not found');
-  
-  skillsData.splice(index, 1);
+  try {
+    const { error } = await supabase
+      .from('skills')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, "Failed to delete skill");
+  }
 };
 
+// Experience data operations
 export const getExperiences = async (): Promise<Experience[]> => {
-  await new Promise(resolve => setTimeout(resolve, 450));
-  return experiencesData;
+  try {
+    const { data, error } = await supabase
+      .from('experiences')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    return data as Experience[];
+  } catch (error) {
+    console.error("Error fetching experiences:", error);
+    return mockExperiences;
+  }
 };
 
 export const updateExperience = async (id: string, data: Partial<Experience>): Promise<Experience> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = experiencesData.findIndex(exp => exp.id === id);
-  if (index === -1) throw new Error('Experience not found');
-  
-  experiencesData[index] = { ...experiencesData[index], ...data };
-  return experiencesData[index];
+  try {
+    const { data: updatedData, error } = await supabase
+      .from('experiences')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return updatedData as Experience;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update experience") || mockExperiences[0];
+  }
 };
 
 export const addExperience = async (data: Omit<Experience, 'id'>): Promise<Experience> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const newExperience = { 
-    ...data, 
-    id: `exp-${Date.now()}` 
-  };
-  experiencesData.push(newExperience);
-  return newExperience;
+  try {
+    const newExperience = { 
+      ...data, 
+      id: `exp-${Date.now()}` 
+    };
+    
+    const { data: createdData, error } = await supabase
+      .from('experiences')
+      .insert([newExperience])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return createdData as Experience;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to add experience") || mockExperiences[0];
+  }
 };
 
 export const deleteExperience = async (id: string): Promise<void> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = experiencesData.findIndex(exp => exp.id === id);
-  if (index === -1) throw new Error('Experience not found');
-  
-  experiencesData.splice(index, 1);
+  try {
+    const { error } = await supabase
+      .from('experiences')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, "Failed to delete experience");
+  }
 };
 
+// Certificate data operations
 export const getCertificates = async (): Promise<Certificate[]> => {
-  await new Promise(resolve => setTimeout(resolve, 350));
-  return certificatesData;
+  try {
+    const { data, error } = await supabase
+      .from('certificates')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    return data as Certificate[];
+  } catch (error) {
+    console.error("Error fetching certificates:", error);
+    return mockCertificates;
+  }
 };
 
 export const updateCertificate = async (id: string, data: Partial<Certificate>): Promise<Certificate> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = certificatesData.findIndex(cert => cert.id === id);
-  if (index === -1) throw new Error('Certificate not found');
-  
-  certificatesData[index] = { ...certificatesData[index], ...data };
-  return certificatesData[index];
+  try {
+    const { data: updatedData, error } = await supabase
+      .from('certificates')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return updatedData as Certificate;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update certificate") || mockCertificates[0];
+  }
 };
 
 export const addCertificate = async (data: Omit<Certificate, 'id'>): Promise<Certificate> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const newCertificate = { 
-    ...data, 
-    id: `cert-${Date.now()}` 
-  };
-  certificatesData.push(newCertificate);
-  return newCertificate;
+  try {
+    const newCertificate = { 
+      ...data, 
+      id: `cert-${Date.now()}` 
+    };
+    
+    const { data: createdData, error } = await supabase
+      .from('certificates')
+      .insert([newCertificate])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return createdData as Certificate;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to add certificate") || mockCertificates[0];
+  }
 };
 
 export const deleteCertificate = async (id: string): Promise<void> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = certificatesData.findIndex(cert => cert.id === id);
-  if (index === -1) throw new Error('Certificate not found');
-  
-  certificatesData.splice(index, 1);
+  try {
+    const { error } = await supabase
+      .from('certificates')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, "Failed to delete certificate");
+  }
 };
 
+// Recommendation data operations
 export const getRecommendations = async (): Promise<Recommendation[]> => {
-  await new Promise(resolve => setTimeout(resolve, 550));
-  return recommendationsData;
+  try {
+    const { data, error } = await supabase
+      .from('recommendations')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    return data as Recommendation[];
+  } catch (error) {
+    console.error("Error fetching recommendations:", error);
+    return mockRecommendations;
+  }
 };
 
 export const updateRecommendation = async (id: string, data: Partial<Recommendation>): Promise<Recommendation> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = recommendationsData.findIndex(rec => rec.id === id);
-  if (index === -1) throw new Error('Recommendation not found');
-  
-  recommendationsData[index] = { ...recommendationsData[index], ...data };
-  return recommendationsData[index];
+  try {
+    const { data: updatedData, error } = await supabase
+      .from('recommendations')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return updatedData as Recommendation;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update recommendation") || mockRecommendations[0];
+  }
 };
 
 export const addRecommendation = async (data: Omit<Recommendation, 'id'>): Promise<Recommendation> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const newRecommendation = { 
-    ...data, 
-    id: `rec-${Date.now()}` 
-  };
-  recommendationsData.push(newRecommendation);
-  return newRecommendation;
+  try {
+    const newRecommendation = { 
+      ...data, 
+      id: `rec-${Date.now()}` 
+    };
+    
+    const { data: createdData, error } = await supabase
+      .from('recommendations')
+      .insert([newRecommendation])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return createdData as Recommendation;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to add recommendation") || mockRecommendations[0];
+  }
 };
 
 export const deleteRecommendation = async (id: string): Promise<void> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = recommendationsData.findIndex(rec => rec.id === id);
-  if (index === -1) throw new Error('Recommendation not found');
-  
-  recommendationsData.splice(index, 1);
+  try {
+    const { error } = await supabase
+      .from('recommendations')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, "Failed to delete recommendation");
+  }
 };
 
+// FunFact data operations
 export const getFunFact = async (): Promise<FunFact> => {
-  await new Promise(resolve => setTimeout(resolve, 250));
-  const randomIndex = Math.floor(Math.random() * funFactsData.length);
-  return funFactsData[randomIndex];
+  try {
+    const { data, error } = await supabase
+      .from('funfacts')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    
+    // Get a random fun fact
+    const randomIndex = Math.floor(Math.random() * data.length);
+    return data[randomIndex] as FunFact;
+  } catch (error) {
+    console.error("Error fetching fun fact:", error);
+    return mockFunFacts[0];
+  }
 };
 
 export const getAllFunFacts = async (): Promise<FunFact[]> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return funFactsData;
+  try {
+    const { data, error } = await supabase
+      .from('funfacts')
+      .select('*')
+      .order('id');
+    
+    if (error) throw error;
+    return data as FunFact[];
+  } catch (error) {
+    console.error("Error fetching fun facts:", error);
+    return mockFunFacts;
+  }
 };
 
 export const updateFunFact = async (id: string, data: Partial<FunFact>): Promise<FunFact> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = funFactsData.findIndex(fact => fact.id === id);
-  if (index === -1) throw new Error('Fun fact not found');
-  
-  funFactsData[index] = { ...funFactsData[index], ...data };
-  return funFactsData[index];
+  try {
+    const { data: updatedData, error } = await supabase
+      .from('funfacts')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return updatedData as FunFact;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to update fun fact") || mockFunFacts[0];
+  }
 };
 
 export const addFunFact = async (data: Omit<FunFact, 'id'>): Promise<FunFact> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const newFunFact = { 
-    ...data, 
-    id: `fact-${Date.now()}` 
-  };
-  funFactsData.push(newFunFact);
-  return newFunFact;
+  try {
+    const newFunFact = { 
+      ...data, 
+      id: `fact-${Date.now()}` 
+    };
+    
+    const { data: createdData, error } = await supabase
+      .from('funfacts')
+      .insert([newFunFact])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return createdData as FunFact;
+  } catch (error) {
+    return handleSupabaseError(error, "Failed to add fun fact") || mockFunFacts[0];
+  }
 };
 
 export const deleteFunFact = async (id: string): Promise<void> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const index = funFactsData.findIndex(fact => fact.id === id);
-  if (index === -1) throw new Error('Fun fact not found');
+  try {
+    const { error } = await supabase
+      .from('funfacts')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  } catch (error) {
+    handleSupabaseError(error, "Failed to delete fun fact");
+  }
+};
+
+// Static content (these don't change, so we keep them in the code)
+export const getAsciiArt = async (): Promise<string> => asciiArt;
+export const getHelpContent = async (): Promise<string> => helpContent;
+export const getWelcomeMessage = async (): Promise<string> => welcomeMessage;
+export const getNotFoundContent = async (): Promise<string> => notFoundContent;
+
+// Theme management (kept in localStorage for better performance)
+export const getTheme = async (): Promise<ThemeConfig> => {
+  // Try to get from localStorage first
+  const savedTheme = localStorage.getItem('terminal_theme');
+  if (savedTheme) {
+    currentTheme = JSON.parse(savedTheme);
+  }
+  return currentTheme;
+};
+
+export const setTheme = async (theme: string): Promise<ThemeConfig> => {
+  switch (theme.toLowerCase()) {
+    case 'light':
+      currentTheme = {
+        name: 'light',
+        backgroundColor: '#f9fafb',
+        foregroundColor: '#333333',
+        accentColor: '#3b82f6'
+      };
+      break;
+    case 'dark':
+      currentTheme = {
+        name: 'dark',
+        backgroundColor: '#1e293b',
+        foregroundColor: '#e2e8f0',
+        accentColor: '#3b82f6'
+      };
+      break;
+    case 'hacker':
+    default:
+      currentTheme = {
+        name: 'hacker',
+        backgroundColor: '#0d1117',
+        foregroundColor: '#00FF00',
+        accentColor: '#1C8CFF'
+      };
+      break;
+  }
   
-  funFactsData.splice(index, 1);
+  // Save to localStorage for persistence
+  localStorage.setItem('terminal_theme', JSON.stringify(currentTheme));
+  return currentTheme;
 };
 
-export const getAsciiArt = async (): Promise<string> => {
-  await new Promise(resolve => setTimeout(resolve, 200));
-  return asciiArt;
-};
-
-export const getHelpContent = async (): Promise<string> => {
-  await new Promise(resolve => setTimeout(resolve, 150));
-  return helpContent;
-};
-
-export const getWelcomeMessage = async (): Promise<string> => {
-  await new Promise(resolve => setTimeout(resolve, 100));
-  return welcomeMessage;
-};
-
-export const getNotFoundContent = async (): Promise<string> => {
-  await new Promise(resolve => setTimeout(resolve, 100));
-  return notFoundContent;
-};
-
+// Resume download
 export const downloadResume = async (): Promise<string> => {
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  // In a real app, this would generate and return a URL to download the resume
-  // For demo purposes, we'll simulate creating a downloadable file using Blob and URL.createObjectURL
-  
   try {
     const about = await getAbout();
     const experiences = await getExperiences();
@@ -315,49 +609,23 @@ ${skills.map(skill => `- ${skill.name} (${skill.category})`).join('\n')}
 ${education.map(cert => `- ${cert.title} (${cert.issuer}, ${cert.date})`).join('\n')}
 `.trim();
 
+    // In a real application, we might generate a PDF or save to Supabase storage
+    // For now, let's create a downloadable text file
+    const blob = new Blob([resumeContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a temporary link and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${about.name.replace(/\s+/g, '_')}_Resume.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
     return "Resume download initiated successfully!";
   } catch (error) {
     console.error("Error generating resume:", error);
     throw new Error("Failed to generate resume");
   }
-};
-
-// Theme management
-export const getTheme = async (): Promise<ThemeConfig> => {
-  await new Promise(resolve => setTimeout(resolve, 100));
-  return currentTheme;
-};
-
-export const setTheme = async (theme: string): Promise<ThemeConfig> => {
-  await new Promise(resolve => setTimeout(resolve, 200));
-  
-  switch (theme.toLowerCase()) {
-    case 'light':
-      currentTheme = {
-        name: 'light',
-        backgroundColor: '#f9fafb',
-        foregroundColor: '#333333',
-        accentColor: '#3b82f6'
-      };
-      break;
-    case 'dark':
-      currentTheme = {
-        name: 'dark',
-        backgroundColor: '#1e293b',
-        foregroundColor: '#e2e8f0',
-        accentColor: '#3b82f6'
-      };
-      break;
-    case 'hacker':
-    default:
-      currentTheme = {
-        name: 'hacker',
-        backgroundColor: '#0d1117',
-        foregroundColor: '#00FF00',
-        accentColor: '#1C8CFF'
-      };
-      break;
-  }
-  
-  return currentTheme;
 };
