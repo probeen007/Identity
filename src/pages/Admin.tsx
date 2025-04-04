@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -950,3 +951,529 @@ const Admin = () => {
                   name="date"
                   value={formData.date || ''}
                   onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-terminal-foreground mb-1">URL</label>
+                <input
+                  type="text"
+                  name="url"
+                  value={formData.url || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                />
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={saveEdit}
+                  disabled={loading}
+                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                >
+                  {loading ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={cancelEdit}
+                  disabled={loading}
+                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'recommendation':
+        return (
+          <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
+            <h3 className="text-lg font-bold mb-4">
+              {editMode.id ? 'Edit Recommendation' : 'Add New Recommendation'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-terminal-foreground mb-1">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-terminal-foreground mb-1">Position</label>
+                <input
+                  type="text"
+                  name="position"
+                  value={formData.position || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-terminal-foreground mb-1">Company</label>
+                <input
+                  type="text"
+                  name="company"
+                  value={formData.company || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-terminal-foreground mb-1">Text</label>
+                <textarea
+                  name="text"
+                  value={formData.text || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                  rows={3}
+                />
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={saveEdit}
+                  disabled={loading}
+                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                >
+                  {loading ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={cancelEdit}
+                  disabled={loading}
+                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'funfact':
+        return (
+          <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
+            <h3 className="text-lg font-bold mb-4">
+              {editMode.id ? 'Edit Fun Fact' : 'Add New Fun Fact'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-terminal-foreground mb-1">Text</label>
+                <textarea
+                  name="text"
+                  value={formData.text || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                  rows={3}
+                />
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={saveEdit}
+                  disabled={loading}
+                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                >
+                  {loading ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={cancelEdit}
+                  disabled={loading}
+                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'about':
+        return renderEditAboutForm();
+        
+      default:
+        return null;
+    }
+  };
+  
+  // Main render
+  return (
+    <div className="min-h-screen bg-hacker-background text-hacker-foreground p-4">
+      {!authenticated ? (
+        <div className="max-w-md mx-auto mt-16 p-6 bg-hacker-light rounded shadow">
+          <h1 className="text-2xl font-bold text-center mb-6">Admin Login</h1>
+          <form onSubmit={handleLogin}>
+            <div className="space-y-4">
+              <div>
+                <label className="block mb-1">Username</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1">Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+              >
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+              <div className="text-xs text-center text-terminal-muted">
+                <p>Demo credentials:</p>
+                <p>Username: admin / Password: password</p>
+              </div>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-6"
+          >
+            <div className="flex flex-col md:flex-row md:items-center mb-6 gap-4">
+              <h1 className="text-2xl font-bold">Terminal Portfolio Admin</h1>
+              <div className="flex space-x-2 ml-auto">
+                <button
+                  onClick={changeTheme.bind(null, 'light')}
+                  className="p-2 bg-hacker-light text-terminal-foreground rounded hover:bg-opacity-90 transition flex items-center"
+                >
+                  <Sun size={16} className="mr-1" />
+                  Light
+                </button>
+                <button
+                  onClick={changeTheme.bind(null, 'dark')}
+                  className="p-2 bg-hacker-dark text-terminal-foreground rounded hover:bg-opacity-90 transition flex items-center"
+                >
+                  <Moon size={16} className="mr-1" />
+                  Dark
+                </button>
+                <button
+                  onClick={changeTheme.bind(null, 'hacker')}
+                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition flex items-center"
+                >
+                  <Terminal size={16} className="mr-1" />
+                  Terminal
+                </button>
+                <button
+                  onClick={handleResumeDownload}
+                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition flex items-center"
+                >
+                  <Download size={16} className="mr-1" />
+                  Generate Resume
+                </button>
+              </div>
+            </div>
+            
+            {/* About Section */}
+            {renderAboutSection()}
+            
+            {/* Edit Form */}
+            {editMode && renderEditForm()}
+            
+            <Tabs defaultValue="projects" className="w-full">
+              <TabsList className="grid grid-cols-6 mb-4">
+                <TabsTrigger value="projects">Projects</TabsTrigger>
+                <TabsTrigger value="skills">Skills</TabsTrigger>
+                <TabsTrigger value="experience">Experience</TabsTrigger>
+                <TabsTrigger value="certificates">Certificates</TabsTrigger>
+                <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+                <TabsTrigger value="funfacts">Fun Facts</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="projects">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Projects</h2>
+                  <button
+                    onClick={() => startAdd('project')}
+                    className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                  >
+                    Add Project
+                  </button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Technologies</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {projects.map((project) => (
+                      <TableRow key={project.id}>
+                        <TableCell>{project.title}</TableCell>
+                        <TableCell>{project.description.substring(0, 50)}...</TableCell>
+                        <TableCell>{project.technologies.join(', ')}</TableCell>
+                        <TableCell className="text-right">
+                          <button
+                            onClick={() => startEdit('project', project.id)}
+                            className="p-1 text-terminal-accent hover:text-terminal-foreground transition mr-2"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteItem('project', project.id)}
+                            className="p-1 text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+              
+              <TabsContent value="skills">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Skills</h2>
+                  <button
+                    onClick={() => startAdd('skill')}
+                    className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                  >
+                    Add Skill
+                  </button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Level</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {skills.map((skill) => (
+                      <TableRow key={skill.id}>
+                        <TableCell>{skill.name}</TableCell>
+                        <TableCell>{skill.category}</TableCell>
+                        <TableCell>
+                          <div className="w-full bg-hacker-dark rounded h-2">
+                            <div 
+                              className="bg-terminal-accent h-2 rounded"
+                              style={{ width: `${skill.level}%` }}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <button
+                            onClick={() => startEdit('skill', skill.id)}
+                            className="p-1 text-terminal-accent hover:text-terminal-foreground transition mr-2"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteItem('skill', skill.id)}
+                            className="p-1 text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+              
+              <TabsContent value="experience">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Experience</h2>
+                  <button
+                    onClick={() => startAdd('experience')}
+                    className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                  >
+                    Add Experience
+                  </button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Position</TableHead>
+                      <TableHead>Duration</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {experiences.map((experience) => (
+                      <TableRow key={experience.id}>
+                        <TableCell>{experience.company}</TableCell>
+                        <TableCell>{experience.position}</TableCell>
+                        <TableCell>{experience.duration}</TableCell>
+                        <TableCell className="text-right">
+                          <button
+                            onClick={() => startEdit('experience', experience.id)}
+                            className="p-1 text-terminal-accent hover:text-terminal-foreground transition mr-2"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteItem('experience', experience.id)}
+                            className="p-1 text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+              
+              <TabsContent value="certificates">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Certificates</h2>
+                  <button
+                    onClick={() => startAdd('certificate')}
+                    className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                  >
+                    Add Certificate
+                  </button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Issuer</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {certificates.map((certificate) => (
+                      <TableRow key={certificate.id}>
+                        <TableCell>{certificate.title}</TableCell>
+                        <TableCell>{certificate.issuer}</TableCell>
+                        <TableCell>{certificate.date}</TableCell>
+                        <TableCell className="text-right">
+                          <button
+                            onClick={() => startEdit('certificate', certificate.id)}
+                            className="p-1 text-terminal-accent hover:text-terminal-foreground transition mr-2"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteItem('certificate', certificate.id)}
+                            className="p-1 text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+              
+              <TabsContent value="recommendations">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Recommendations</h2>
+                  <button
+                    onClick={() => startAdd('recommendation')}
+                    className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                  >
+                    Add Recommendation
+                  </button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Position</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recommendations.map((recommendation) => (
+                      <TableRow key={recommendation.id}>
+                        <TableCell>{recommendation.name}</TableCell>
+                        <TableCell>{recommendation.position}</TableCell>
+                        <TableCell>{recommendation.company}</TableCell>
+                        <TableCell className="text-right">
+                          <button
+                            onClick={() => startEdit('recommendation', recommendation.id)}
+                            className="p-1 text-terminal-accent hover:text-terminal-foreground transition mr-2"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteItem('recommendation', recommendation.id)}
+                            className="p-1 text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+              
+              <TabsContent value="funfacts">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Fun Facts</h2>
+                  <button
+                    onClick={() => startAdd('funfact')}
+                    className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+                  >
+                    Add Fun Fact
+                  </button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Text</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {funFacts.map((funFact) => (
+                      <TableRow key={funFact.id}>
+                        <TableCell>{funFact.text}</TableCell>
+                        <TableCell className="text-right">
+                          <button
+                            onClick={() => startEdit('funfact', funFact.id)}
+                            className="p-1 text-terminal-accent hover:text-terminal-foreground transition mr-2"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteItem('funfact', funFact.id)}
+                            className="p-1 text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+            </Tabs>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Admin;
