@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -49,12 +48,11 @@ import {
   Experience, 
   Certificate, 
   Recommendation,
-
   FunFact,
   About,
   ThemeConfig
 } from '@/types';
-import { Edit, Trash, Download, Terminal, Sun, Moon } from 'lucide-react';
+import { Edit, Trash, Download, Terminal, Sun, Moon, Upload, User } from 'lucide-react';
 
 const Admin = () => {
   const [username, setUsername] = useState('');
@@ -223,6 +221,30 @@ const Admin = () => {
     setFormData({});
   };
   
+  // Add profile image handling
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+        
+        // Update form data with the new image preview
+        setFormData(prev => ({
+          ...prev,
+          profileImageUrl: reader.result as string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Save edited item
   const saveEdit = async () => {
     if (!editMode) return;
@@ -230,6 +252,13 @@ const Admin = () => {
     try {
       setLoading(true);
       
+      // Process image if it exists (in a real app, this would upload to cloud storage)
+      if (editMode.type === 'about' && imageFile) {
+        // In a real app with backend, you would upload the file to a storage service
+        // For now, we'll just use the Data URL from the preview
+        formData.profileImageUrl = imagePreview;
+      }
+
       switch (editMode.type) {
         case 'project':
           if (editMode.id) {
@@ -296,6 +325,11 @@ const Admin = () => {
         description: "Your changes have been saved successfully.",
         variant: "default",
       });
+      
+      // Reset image states after saving
+      if (editMode.type === 'about') {
+        setImageFile(null);
+      }
       
       cancelEdit();
     } catch (error) {
@@ -463,58 +497,217 @@ const Admin = () => {
     }
   };
 
-  if (!authenticated) {
+  // Enhanced about information display with profile image
+  const renderAboutSection = () => {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-terminal-background">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md p-6 bg-hacker-light rounded-lg border border-terminal-accent"
-        >
-          <h1 className="text-2xl font-bold text-terminal-foreground mb-6 text-center">Admin Access</h1>
-          
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-terminal-foreground mb-1">Username</label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded focus:outline-none focus:ring-1 focus:ring-terminal-accent"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-terminal-foreground mb-1">Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded focus:outline-none focus:ring-1 focus:ring-terminal-accent"
-                required
-              />
-            </div>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+      <div className="bg-hacker-light p-4 rounded border border-terminal-accent mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold">About Information</h3>
+          {about && (
+            <button 
+              onClick={() => startEdit('about', 'about')}
+              className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 flex items-center space-x-1"
             >
-              {loading ? 'Authenticating...' : 'Login'}
+              <Edit size={14} />
+              <span>Edit</span>
             </button>
-          </form>
-          
-          <div className="mt-4 text-center text-terminal-accent text-sm">
-            <p>Hint: For demo, use admin/password</p>
+          )}
+        </div>
+        
+        {about ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col items-center md:items-start">
+              {about.profileImageUrl ? (
+                <div className="mb-3 w-32 h-32 rounded-full overflow-hidden border-2 border-terminal-accent">
+                  <img 
+                    src={about.profileImageUrl} 
+                    alt={about.name}
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+              ) : (
+                <div className="mb-3 w-32 h-32 rounded-full flex items-center justify-center bg-hacker-dark border-2 border-terminal-accent">
+                  <User size={48} className="text-terminal-accent opacity-50" />
+                </div>
+              )}
+            </div>
+            <div>
+              <div>
+                <p className="text-terminal-muted">Name:</p>
+                <p className="text-lg font-bold">{about.name}</p>
+              </div>
+              <div className="mt-2">
+                <p className="text-terminal-muted">Title:</p>
+                <p>{about.title}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-terminal-muted">Location:</p>
+              <p>{about.location}</p>
+            </div>
+            <div>
+              <p className="text-terminal-muted">Email:</p>
+              <p>{about.email}</p>
+            </div>
+            <div className="md:col-span-2">
+              <p className="text-terminal-muted">Bio:</p>
+              <p>{about.bio}</p>
+            </div>
+            <div className="md:col-span-2">
+              <p className="text-terminal-muted">Social Links:</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {about.socialLinks.github && (
+                  <a href={about.socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline">GitHub</a>
+                )}
+                {about.socialLinks.linkedin && (
+                  <a href={about.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline">LinkedIn</a>
+                )}
+                {about.socialLinks.twitter && (
+                  <a href={about.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline">Twitter</a>
+                )}
+              </div>
+            </div>
           </div>
-        </motion.div>
+        ) : (
+          <p className="text-terminal-muted">Loading about information...</p>
+        )}
       </div>
     );
-  }
+  };
+
+  // Enhanced about form with profile image upload
+  const renderEditAboutForm = () => {
+    return (
+      <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
+        <h3 className="text-lg font-bold mb-4">Edit About Information</h3>
+        <div className="space-y-4">
+          <div className="flex flex-col items-center mb-4">
+            <div className="mb-2 w-32 h-32 rounded-full overflow-hidden border-2 border-terminal-accent bg-hacker-dark">
+              {(imagePreview || formData.profileImageUrl) ? (
+                <img 
+                  src={imagePreview || formData.profileImageUrl} 
+                  alt="Profile Preview" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <User size={48} className="text-terminal-accent opacity-50" />
+                </div>
+              )}
+            </div>
+            <label className="cursor-pointer p-2 mt-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 flex items-center space-x-1">
+              <Upload size={14} />
+              <span>Upload Image</span>
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+
+          <div>
+            <label className="block text-terminal-foreground mb-1">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-terminal-foreground mb-1">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-terminal-foreground mb-1">Location</label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-terminal-foreground mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-terminal-foreground mb-1">Bio</label>
+            <textarea
+              name="bio"
+              value={formData.bio || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+              rows={3}
+            />
+          </div>
+          <div>
+            <label className="block text-terminal-foreground mb-1">GitHub URL</label>
+            <input
+              type="text"
+              name="github"
+              value={formData.socialLinks?.github || ''}
+              onChange={handleSocialLinkChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-terminal-foreground mb-1">LinkedIn URL</label>
+            <input
+              type="text"
+              name="linkedin"
+              value={formData.socialLinks?.linkedin || ''}
+              onChange={handleSocialLinkChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          <div>
+            <label className="block text-terminal-foreground mb-1">Twitter URL</label>
+            <input
+              type="text"
+              name="twitter"
+              value={formData.socialLinks?.twitter || ''}
+              onChange={handleSocialLinkChange}
+              className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
+            />
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={saveEdit}
+              disabled={loading}
+              className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </button>
+            <button
+              onClick={cancelEdit}
+              disabled={loading}
+              className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Edit form based on the current edit mode
   const renderEditForm = () => {
@@ -757,713 +950,4 @@ const Admin = () => {
                   name="date"
                   value={formData.date || ''}
                   onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">URL</label>
-                <input
-                  type="text"
-                  name="url"
-                  value={formData.url || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={saveEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
-                >
-                  {loading ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  onClick={cancelEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-        
-      case 'recommendation':
-        return (
-          <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-            <h3 className="text-lg font-bold mb-4">
-              {editMode.id ? 'Edit Recommendation' : 'Add New Recommendation'}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-terminal-foreground mb-1">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Position</label>
-                <input
-                  type="text"
-                  name="position"
-                  value={formData.position || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Testimonial</label>
-                <textarea
-                  name="text"
-                  value={formData.text || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                  rows={3}
-                />
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={saveEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
-                >
-                  {loading ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  onClick={cancelEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-        
-      case 'funfact':
-        return (
-          <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-            <h3 className="text-lg font-bold mb-4">
-              {editMode.id ? 'Edit Fun Fact' : 'Add New Fun Fact'}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-terminal-foreground mb-1">Fun Fact Text</label>
-                <textarea
-                  name="text"
-                  value={formData.text || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                  rows={3}
-                />
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={saveEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
-                >
-                  {loading ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  onClick={cancelEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-        
-      case 'about':
-        return (
-          <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-            <h3 className="text-lg font-bold mb-4">Edit About Information</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-terminal-foreground mb-1">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Bio</label>
-                <textarea
-                  name="bio"
-                  value={formData.bio || ''}
-                  onChange={handleInputChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">GitHub URL</label>
-                <input
-                  type="text"
-                  name="github"
-                  value={formData.socialLinks?.github || ''}
-                  onChange={handleSocialLinkChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">LinkedIn URL</label>
-                <input
-                  type="text"
-                  name="linkedin"
-                  value={formData.socialLinks?.linkedin || ''}
-                  onChange={handleSocialLinkChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div>
-                <label className="block text-terminal-foreground mb-1">Twitter URL</label>
-                <input
-                  type="text"
-                  name="twitter"
-                  value={formData.socialLinks?.twitter || ''}
-                  onChange={handleSocialLinkChange}
-                  className="w-full p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded"
-                />
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={saveEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 transition"
-                >
-                  {loading ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  onClick={cancelEdit}
-                  disabled={loading}
-                  className="flex-1 p-2 bg-hacker-dark text-terminal-foreground border border-terminal-accent rounded hover:bg-opacity-90 transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-hacker-dark text-terminal-foreground">
-      <header className="bg-hacker-light p-4 border-b border-terminal-accent">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">Portfolio Admin</h1>
-          <div className="flex items-center space-x-4">
-            <a 
-              href="/"
-              className="px-3 py-1 bg-hacker-dark border border-terminal-accent text-terminal-foreground rounded hover:bg-opacity-90 flex items-center space-x-1"
-            >
-              <Terminal size={16} />
-              <span>Terminal</span>
-            </a>
-            <button 
-              onClick={() => setAuthenticated(false)}
-              className="px-3 py-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-      
-      <main className="container mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
-        
-        {/* Theme selector */}
-        <div className="bg-hacker-light p-4 rounded border border-terminal-accent mb-6">
-          <h3 className="text-lg font-bold mb-4">Terminal Theme</h3>
-          <div className="flex space-x-4">
-            <button 
-              onClick={() => changeTheme('light')}
-              className={`p-3 rounded flex items-center space-x-2 ${theme?.name === 'light' ? 'bg-terminal-accent text-terminal-background' : 'bg-hacker-dark text-terminal-foreground'}`}
-            >
-              <Sun size={18} />
-              <span>Light</span>
-            </button>
-            <button 
-              onClick={() => changeTheme('dark')}
-              className={`p-3 rounded flex items-center space-x-2 ${theme?.name === 'dark' ? 'bg-terminal-accent text-terminal-background' : 'bg-hacker-dark text-terminal-foreground'}`}
-            >
-              <Moon size={18} />
-              <span>Dark</span>
-            </button>
-            <button 
-              onClick={() => changeTheme('hacker')}
-              className={`p-3 rounded flex items-center space-x-2 ${theme?.name === 'hacker' ? 'bg-terminal-accent text-terminal-background' : 'bg-hacker-dark text-terminal-foreground'}`}
-            >
-              <Terminal size={18} />
-              <span>Hacker</span>
-            </button>
-          </div>
-        </div>
-        
-        {/* Resume generator */}
-        <div className="bg-hacker-light p-4 rounded border border-terminal-accent mb-6">
-          <h3 className="text-lg font-bold mb-4">Resume Generator</h3>
-          <div className="flex items-center space-x-2">
-            <button 
-              onClick={handleResumeDownload}
-              disabled={loading}
-              className="px-4 py-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 flex items-center space-x-2"
-            >
-              <Download size={18} />
-              <span>{loading ? 'Generating...' : 'Generate & Download Resume'}</span>
-            </button>
-            <p className="text-sm text-terminal-muted">Generate a resume based on the portfolio data</p>
-          </div>
-        </div>
-        
-        {/* About information */}
-        <div className="bg-hacker-light p-4 rounded border border-terminal-accent mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">About Information</h3>
-            {about && (
-              <button 
-                onClick={() => startEdit('about', 'about')}
-                className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90 flex items-center space-x-1"
-              >
-                <Edit size={14} />
-                <span>Edit</span>
-              </button>
-            )}
-          </div>
-          
-          {about ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-terminal-muted">Name:</p>
-                <p>{about.name}</p>
-              </div>
-              <div>
-                <p className="text-terminal-muted">Title:</p>
-                <p>{about.title}</p>
-              </div>
-              <div>
-                <p className="text-terminal-muted">Location:</p>
-                <p>{about.location}</p>
-              </div>
-              <div>
-                <p className="text-terminal-muted">Email:</p>
-                <p>{about.email}</p>
-              </div>
-              <div className="md:col-span-2">
-                <p className="text-terminal-muted">Bio:</p>
-                <p>{about.bio}</p>
-              </div>
-              <div className="md:col-span-2">
-                <p className="text-terminal-muted">Social Links:</p>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {about.socialLinks.github && (
-                    <a href={about.socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline">GitHub</a>
-                  )}
-                  {about.socialLinks.linkedin && (
-                    <a href={about.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline">LinkedIn</a>
-                  )}
-                  {about.socialLinks.twitter && (
-                    <a href={about.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline">Twitter</a>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-terminal-muted">Loading about information...</p>
-          )}
-        </div>
-        
-        {/* Content tabs */}
-        <Tabs defaultValue="projects" className="w-full">
-          <TabsList className="w-full bg-hacker-light mb-4 grid grid-cols-3 md:grid-cols-6">
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="skills">Skills</TabsTrigger>
-            <TabsTrigger value="experience">Experience</TabsTrigger>
-            <TabsTrigger value="certificates">Certificates</TabsTrigger>
-            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-            <TabsTrigger value="funfacts">Fun Facts</TabsTrigger>
-          </TabsList>
-          
-          {/* Projects tab */}
-          <TabsContent value="projects">
-            <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Projects</h3>
-                <button 
-                  onClick={() => startAdd('project')}
-                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                >
-                  Add Project
-                </button>
-              </div>
-              
-              {editMode?.type === 'project' ? (
-                renderEditForm()
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Technologies</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {projects.map(project => (
-                      <TableRow key={project.id}>
-                        <TableCell className="font-bold">{project.title}</TableCell>
-                        <TableCell>{project.technologies.join(', ')}</TableCell>
-                        <TableCell className="flex space-x-2">
-                          <button 
-                            onClick={() => startEdit('project', project.id)}
-                            className="p-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteItem('project', project.id)}
-                            className="p-1 bg-terminal-error text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </TabsContent>
-          
-          {/* Skills tab */}
-          <TabsContent value="skills">
-            <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Skills</h3>
-                <button 
-                  onClick={() => startAdd('skill')}
-                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                >
-                  Add Skill
-                </button>
-              </div>
-              
-              {editMode?.type === 'skill' ? (
-                renderEditForm()
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Level</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {skills.map(skill => (
-                      <TableRow key={skill.id}>
-                        <TableCell className="font-bold">{skill.name}</TableCell>
-                        <TableCell>{skill.category}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <div className="w-32 bg-hacker-dark rounded-full h-2 overflow-hidden">
-                              <div className="bg-terminal-accent h-full" style={{ width: `${skill.level}%` }}></div>
-                            </div>
-                            <span className="text-xs">{skill.level}%</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="flex space-x-2">
-                          <button 
-                            onClick={() => startEdit('skill', skill.id)}
-                            className="p-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteItem('skill', skill.id)}
-                            className="p-1 bg-terminal-error text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </TabsContent>
-          
-          {/* Experience tab */}
-          <TabsContent value="experience">
-            <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Experience</h3>
-                <button 
-                  onClick={() => startAdd('experience')}
-                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                >
-                  Add Experience
-                </button>
-              </div>
-              
-              {editMode?.type === 'experience' ? (
-                renderEditForm()
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Position</TableHead>
-                      <TableHead>Company</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {experiences.map(exp => (
-                      <TableRow key={exp.id}>
-                        <TableCell className="font-bold">{exp.position}</TableCell>
-                        <TableCell>{exp.company}</TableCell>
-                        <TableCell>{exp.duration}</TableCell>
-                        <TableCell className="flex space-x-2">
-                          <button 
-                            onClick={() => startEdit('experience', exp.id)}
-                            className="p-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteItem('experience', exp.id)}
-                            className="p-1 bg-terminal-error text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </TabsContent>
-          
-          {/* Certificates tab */}
-          <TabsContent value="certificates">
-            <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Certificates</h3>
-                <button 
-                  onClick={() => startAdd('certificate')}
-                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                >
-                  Add Certificate
-                </button>
-              </div>
-              
-              {editMode?.type === 'certificate' ? (
-                renderEditForm()
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Issuer</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {certificates.map(cert => (
-                      <TableRow key={cert.id}>
-                        <TableCell className="font-bold">{cert.title}</TableCell>
-                        <TableCell>{cert.issuer}</TableCell>
-                        <TableCell>{cert.date}</TableCell>
-                        <TableCell className="flex space-x-2">
-                          <button 
-                            onClick={() => startEdit('certificate', cert.id)}
-                            className="p-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteItem('certificate', cert.id)}
-                            className="p-1 bg-terminal-error text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </TabsContent>
-          
-          {/* Recommendations tab */}
-          <TabsContent value="recommendations">
-            <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Recommendations</h3>
-                <button 
-                  onClick={() => startAdd('recommendation')}
-                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                >
-                  Add Recommendation
-                </button>
-              </div>
-              
-              {editMode?.type === 'recommendation' ? (
-                renderEditForm()
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Position</TableHead>
-                      <TableHead>Company</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recommendations.map(rec => (
-                      <TableRow key={rec.id}>
-                        <TableCell className="font-bold">{rec.name}</TableCell>
-                        <TableCell>{rec.position}</TableCell>
-                        <TableCell>{rec.company}</TableCell>
-                        <TableCell className="flex space-x-2">
-                          <button 
-                            onClick={() => startEdit('recommendation', rec.id)}
-                            className="p-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteItem('recommendation', rec.id)}
-                            className="p-1 bg-terminal-error text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </TabsContent>
-          
-          {/* Fun Facts tab */}
-          <TabsContent value="funfacts">
-            <div className="bg-hacker-light p-4 rounded border border-terminal-accent">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Fun Facts</h3>
-                <button 
-                  onClick={() => startAdd('funfact')}
-                  className="p-2 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                >
-                  Add Fun Fact
-                </button>
-              </div>
-              
-              {editMode?.type === 'funfact' ? (
-                renderEditForm()
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Fun Fact</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {funFacts.map(fact => (
-                      <TableRow key={fact.id}>
-                        <TableCell>{fact.text}</TableCell>
-                        <TableCell className="flex space-x-2">
-                          <button 
-                            onClick={() => startEdit('funfact', fact.id)}
-                            className="p-1 bg-terminal-accent text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteItem('funfact', fact.id)}
-                            className="p-1 bg-terminal-error text-terminal-background rounded hover:bg-opacity-90"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
-  );
-};
-
-export default Admin;
+                  className

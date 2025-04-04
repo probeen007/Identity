@@ -25,7 +25,10 @@ import {
 } from '@/types';
 
 // Mock database for demo purposes
-let aboutData = { ...mockAbout };
+let aboutData = { 
+  ...mockAbout, 
+  profileImageUrl: '' // Default empty profile image
+};
 let projectsData = [...mockProjects];
 let skillsData = [...mockSkills];
 let experiencesData = [...mockExperiences];

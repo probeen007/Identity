@@ -70,6 +70,7 @@ export interface About {
   bio: string;
   location: string;
   email: string;
+  profileImageUrl?: string; // Added profile image URL
   socialLinks: {
     github?: string;
     linkedin?: string;
