@@ -950,4 +950,3 @@ const Admin = () => {
                   name="date"
                   value={formData.date || ''}
                   onChange={handleInputChange}
-                  className
