@@ -27,7 +27,7 @@ import {
 // Mock database for demo purposes
 let aboutData = { 
   ...mockAbout, 
-  profileImageUrl: '' // Default empty profile image
+  profileImageUrl: '/placeholder.svg' // Set a default value instead of empty string
 };
 let projectsData = [...mockProjects];
 let skillsData = [...mockSkills];
