@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Command } from '@/types';
 import {
@@ -518,4 +519,3 @@ const useTerminalCommands = () => {
 };
 
 export default useTerminalCommands;
-```</lov-code>
