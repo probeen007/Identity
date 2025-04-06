@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -6,6 +7,7 @@ import ThemeControls from '@/components/admin/ThemeControls';
 import AboutSection from '@/components/admin/AboutSection';
 import ContentTabs from '@/components/admin/ContentTabs';
 import FormRenderer from '@/components/admin/FormRenderer';
+import useRealTimeData from '@/hooks/useRealTimeData';
 import {
   getProjects,
   updateProject,
@@ -53,15 +55,28 @@ const Admin = () => {
   const { toast } = useToast();
   
   // Content states
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [funFacts, setFunFacts] = useState<FunFact[]>([]);
   const [about, setAbout] = useState<About | null>(null);
   const [theme, setThemeState] = useState<ThemeConfig | null>(null);
   const [currentTheme, setCurrentTheme] = useState<string>('light');
+  
+  // Use real-time data hooks for collections
+  const { data: projects, setData: setProjects, loading: projectsLoading } = 
+    useRealTimeData<Project>('projects', [], getProjects);
+  
+  const { data: skills, setData: setSkills, loading: skillsLoading } = 
+    useRealTimeData<Skill>('skills', [], getSkills);
+    
+  const { data: experiences, setData: setExperiences, loading: experiencesLoading } = 
+    useRealTimeData<Experience>('experiences', [], getExperiences);
+    
+  const { data: certificates, setData: setCertificates, loading: certificatesLoading } = 
+    useRealTimeData<Certificate>('certificates', [], getCertificates);
+    
+  const { data: recommendations, setData: setRecommendations, loading: recommendationsLoading } = 
+    useRealTimeData<Recommendation>('recommendations', [], getRecommendations);
+    
+  const { data: funFacts, setData: setFunFacts, loading: funFactsLoading } = 
+    useRealTimeData<FunFact>('funfacts', [], getAllFunFacts);
   
   // Edit states
   const [editMode, setEditMode] = useState<{
@@ -72,56 +87,41 @@ const Admin = () => {
   // Form data for editing
   const [formData, setFormData] = useState<any>({});
   
-  // Load all data from services
-  const loadAllData = async () => {
-    try {
-      setLoading(true);
-      
-      const [
-        projectsData,
-        skillsData,
-        experiencesData,
-        certificatesData,
-        recommendationsData,
-        funFactsData,
-        aboutData,
-        themeData
-      ] = await Promise.all([
-        getProjects(),
-        getSkills(),
-        getExperiences(),
-        getCertificates(),
-        getRecommendations(),
-        getAllFunFacts(),
-        getAbout(),
-        getTheme()
-      ]);
-      
-      setProjects(projectsData);
-      setSkills(skillsData);
-      setExperiences(experiencesData);
-      setCertificates(certificatesData);
-      setRecommendations(recommendationsData);
-      setFunFacts(funFactsData);
-      setAbout(aboutData);
-      setThemeState(themeData);
-      setCurrentTheme(themeData?.name || 'light');
-      
-      // Apply theme to document
-      document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-hacker');
-      document.documentElement.classList.add(`theme-${themeData?.name || 'light'}`);
-      
-    } catch (error) {
-      toast({
-        title: "Error loading data",
-        description: "There was an error loading the content data.",
-        variant: "destructive",
-      });
-      console.error("Error loading data:", error);
-    } finally {
-      setLoading(false);
+  // Load about data and theme
+  useEffect(() => {
+    const loadAboutAndTheme = async () => {
+      try {
+        setLoading(true);
+        
+        const [aboutData, themeData] = await Promise.all([
+          getAbout(),
+          getTheme()
+        ]);
+        
+        setAbout(aboutData);
+        setThemeState(themeData);
+        setCurrentTheme(themeData?.name || 'light');
+        
+        // Apply theme to document
+        document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-hacker');
+        document.documentElement.classList.add(`theme-${themeData?.name || 'light'}`);
+        
+      } catch (error) {
+        toast({
+          title: "Error loading data",
+          description: "There was an error loading the about data.",
+          variant: "destructive",
+        });
+        console.error("Error loading about data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (authenticated) {
+      loadAboutAndTheme();
     }
-  };
+  }, [authenticated, toast]);
   
   // Handle field changes in forms
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -232,60 +232,48 @@ const Admin = () => {
         case 'project':
           if (editMode.id) {
             await updateProject(editMode.id, formData);
-            setProjects(prev => prev.map(p => p.id === editMode.id ? { ...p, ...formData } : p));
           } else {
-            const newProject = await addProject(formData);
-            setProjects(prev => [...prev, newProject]);
+            await addProject(formData);
           }
           break;
         case 'skill':
           if (editMode.id) {
             await updateSkill(editMode.id, formData);
-            setSkills(prev => prev.map(s => s.id === editMode.id ? { ...s, ...formData } : s));
           } else {
-            const newSkill = await addSkill(formData);
-            setSkills(prev => [...prev, newSkill]);
+            await addSkill(formData);
           }
           break;
         case 'experience':
           if (editMode.id) {
             await updateExperience(editMode.id, formData);
-            setExperiences(prev => prev.map(e => e.id === editMode.id ? { ...e, ...formData } : e));
           } else {
-            const newExperience = await addExperience(formData);
-            setExperiences(prev => [...prev, newExperience]);
+            await addExperience(formData);
           }
           break;
         case 'certificate':
           if (editMode.id) {
             await updateCertificate(editMode.id, formData);
-            setCertificates(prev => prev.map(c => c.id === editMode.id ? { ...c, ...formData } : c));
           } else {
-            const newCertificate = await addCertificate(formData);
-            setCertificates(prev => [...prev, newCertificate]);
+            await addCertificate(formData);
           }
           break;
         case 'recommendation':
           if (editMode.id) {
             await updateRecommendation(editMode.id, formData);
-            setRecommendations(prev => prev.map(r => r.id === editMode.id ? { ...r, ...formData } : r));
           } else {
-            const newRecommendation = await addRecommendation(formData);
-            setRecommendations(prev => [...prev, newRecommendation]);
+            await addRecommendation(formData);
           }
           break;
         case 'funfact':
           if (editMode.id) {
             await updateFunFact(editMode.id, formData);
-            setFunFacts(prev => prev.map(f => f.id === editMode.id ? { ...f, ...formData } : f));
           } else {
-            const newFunFact = await addFunFact(formData);
-            setFunFacts(prev => [...prev, newFunFact]);
+            await addFunFact(formData);
           }
           break;
         case 'about':
-          await updateAbout(formData);
-          setAbout(formData);
+          const updatedAbout = await updateAbout(formData);
+          setAbout(updatedAbout);
           break;
       }
       
@@ -321,27 +309,21 @@ const Admin = () => {
       switch (type) {
         case 'project':
           await deleteProject(id);
-          setProjects(prev => prev.filter(p => p.id !== id));
           break;
         case 'skill':
           await deleteSkill(id);
-          setSkills(prev => prev.filter(s => s.id !== id));
           break;
         case 'experience':
           await deleteExperience(id);
-          setExperiences(prev => prev.filter(e => e.id !== id));
           break;
         case 'certificate':
           await deleteCertificate(id);
-          setCertificates(prev => prev.filter(c => c.id !== id));
           break;
         case 'recommendation':
           await deleteRecommendation(id);
-          setRecommendations(prev => prev.filter(r => r.id !== id));
           break;
         case 'funfact':
           await deleteFunFact(id);
-          setFunFacts(prev => prev.filter(f => f.id !== id));
           break;
       }
       
@@ -477,7 +459,6 @@ const Admin = () => {
   // Handle successful login
   const handleLoginSuccess = () => {
     setAuthenticated(true);
-    loadAllData();
   };
 
   return (
@@ -530,6 +511,9 @@ const Admin = () => {
               onAdd={startAdd}
               onEdit={startEdit}
               onDelete={deleteItem}
+              loading={loading || projectsLoading || skillsLoading || 
+                experiencesLoading || certificatesLoading || 
+                recommendationsLoading || funFactsLoading}
             />
           </motion.div>
         </div>

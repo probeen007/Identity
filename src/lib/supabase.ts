@@ -2,21 +2,24 @@
 import { createClient } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Use the Supabase project URL and anon key from config
+const supabaseUrl = "https://vymhcofvwccvpiguuljz.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5bWhjb2Z2d2NjdnBpZ3V1bGp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3Mzk4NTMsImV4cCI6MjA1OTMxNTg1M30.szlur3_54B-uKf6KlcVAm03Pw4_47tsm9j0w1_STu9I";
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("Missing Supabase environment variables. Check your .env file.");
-}
-
+// Create Supabase client with real-time enabled
 export const supabase = createClient(
-  supabaseUrl || '',
-  supabaseAnonKey || '',
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-    }
+    },
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
+      },
+    },
   }
 );
 
@@ -64,7 +67,7 @@ export const getCurrentUser = async () => {
   }
 };
 
-// Generic database operations
+// Generic database operations with real-time support
 export const fetchData = async (table: string) => {
   try {
     const { data, error } = await supabase
@@ -124,4 +127,31 @@ export const deleteData = async (table: string, id: string) => {
   } catch (error) {
     return handleSupabaseError(error, `Failed to delete from ${table}`);
   }
+};
+
+// Setup real-time listeners for a table
+export const setupRealtimeListener = (
+  table: string, 
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE' | '*' = '*',
+  callback: (payload: any) => void
+) => {
+  const channel = supabase
+    .channel(`table-${table}-changes`)
+    .on(
+      'postgres_changes',
+      {
+        event: eventType,
+        schema: 'public',
+        table: table
+      },
+      (payload) => {
+        console.log('Real-time update received:', payload);
+        callback(payload);
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
 };

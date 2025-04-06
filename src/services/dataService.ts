@@ -1,3 +1,4 @@
+
 import { 
   About, 
   Project, 
@@ -8,9 +9,10 @@ import {
   FunFact,
   ThemeConfig
 } from '@/types';
-import { supabase, handleSupabaseError } from '@/lib/supabase';
+import { supabase, handleSupabaseError, setupRealtimeListener } from '@/lib/supabase';
 import { mockAbout, mockProjects, mockSkills, mockExperiences, mockCertificates, 
   mockRecommendations, mockFunFacts, asciiArt, helpContent, notFoundContent, welcomeMessage } from '@/utils/mockData';
+import { toast } from 'sonner';
 
 // Theme storage (stays in local storage for better performance)
 let currentTheme: ThemeConfig = {
@@ -72,10 +74,10 @@ export const getAbout = async (): Promise<About> => {
     const { data, error } = await supabase
       .from('about')
       .select('*')
-      .single();
+      .maybeSingle();
     
     if (error) throw error;
-    return data as About;
+    return data as About || mockAbout;
   } catch (error) {
     console.error("Error fetching about data:", error);
     // Fallback to mock data if database fails
@@ -88,26 +90,44 @@ export const updateAbout = async (data: About): Promise<About> => {
     // First check if about data exists
     const existingData = await getAbout();
     
-    if (existingData) {
+    if (existingData && existingData.id) {
       // Update existing record
       const { data: updatedData, error } = await supabase
         .from('about')
-        .update(data)
-        .eq('email', data.email)  // Use email as a unique identifier
+        .update({
+          name: data.name,
+          title: data.title, 
+          bio: data.bio,
+          location: data.location,
+          email: data.email,
+          profileimageurl: data.profileImageUrl,
+          sociallinks: data.socialLinks
+        })
+        .eq('id', existingData.id)
         .select()
         .single();
       
       if (error) throw error;
+      toast.success("About information updated");
       return updatedData as About;
     } else {
       // Insert new record
       const { data: newData, error } = await supabase
         .from('about')
-        .insert([data])
+        .insert([{
+          name: data.name,
+          title: data.title, 
+          bio: data.bio,
+          location: data.location,
+          email: data.email,
+          profileimageurl: data.profileImageUrl,
+          sociallinks: data.socialLinks
+        }])
         .select()
         .single();
       
       if (error) throw error;
+      toast.success("About information created");
       return newData as About;
     }
   } catch (error) {
@@ -135,7 +155,14 @@ export const updateProject = async (id: string, data: Partial<Project>): Promise
   try {
     const { data: updatedData, error } = await supabase
       .from('projects')
-      .update(data)
+      .update({
+        title: data.title,
+        description: data.description,
+        technologies: data.technologies,
+        githuburl: data.githubUrl,
+        demourl: data.demoUrl,
+        imageurl: data.imageUrl
+      })
       .eq('id', id)
       .select()
       .single();
@@ -150,8 +177,13 @@ export const updateProject = async (id: string, data: Partial<Project>): Promise
 export const addProject = async (data: Omit<Project, 'id'>): Promise<Project> => {
   try {
     const newProject = { 
-      ...data, 
-      id: `project-${Date.now()}` 
+      id: `project-${Date.now()}`,
+      title: data.title,
+      description: data.description,
+      technologies: data.technologies,
+      githuburl: data.githubUrl,
+      demourl: data.demoUrl,
+      imageurl: data.imageUrl
     };
     
     const { data: createdData, error } = await supabase
