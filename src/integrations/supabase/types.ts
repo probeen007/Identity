@@ -9,7 +9,177 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      about: {
+        Row: {
+          bio: string
+          email: string
+          id: string
+          location: string
+          name: string
+          profileimageurl: string | null
+          sociallinks: Json
+          title: string
+        }
+        Insert: {
+          bio: string
+          email: string
+          id?: string
+          location: string
+          name: string
+          profileimageurl?: string | null
+          sociallinks?: Json
+          title: string
+        }
+        Update: {
+          bio?: string
+          email?: string
+          id?: string
+          location?: string
+          name?: string
+          profileimageurl?: string | null
+          sociallinks?: Json
+          title?: string
+        }
+        Relationships: []
+      }
+      certificates: {
+        Row: {
+          date: string
+          id: string
+          issuer: string
+          title: string
+          url: string | null
+        }
+        Insert: {
+          date: string
+          id: string
+          issuer: string
+          title: string
+          url?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          issuer?: string
+          title?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      experiences: {
+        Row: {
+          company: string
+          description: string
+          duration: string
+          id: string
+          position: string
+        }
+        Insert: {
+          company: string
+          description: string
+          duration: string
+          id: string
+          position: string
+        }
+        Update: {
+          company?: string
+          description?: string
+          duration?: string
+          id?: string
+          position?: string
+        }
+        Relationships: []
+      }
+      funfacts: {
+        Row: {
+          id: string
+          text: string
+        }
+        Insert: {
+          id: string
+          text: string
+        }
+        Update: {
+          id?: string
+          text?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          demourl: string | null
+          description: string
+          githuburl: string | null
+          id: string
+          imageurl: string | null
+          technologies: string[]
+          title: string
+        }
+        Insert: {
+          demourl?: string | null
+          description: string
+          githuburl?: string | null
+          id: string
+          imageurl?: string | null
+          technologies: string[]
+          title: string
+        }
+        Update: {
+          demourl?: string | null
+          description?: string
+          githuburl?: string | null
+          id?: string
+          imageurl?: string | null
+          technologies?: string[]
+          title?: string
+        }
+        Relationships: []
+      }
+      recommendations: {
+        Row: {
+          company: string
+          id: string
+          name: string
+          position: string
+          text: string
+        }
+        Insert: {
+          company: string
+          id: string
+          name: string
+          position: string
+          text: string
+        }
+        Update: {
+          company?: string
+          id?: string
+          name?: string
+          position?: string
+          text?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          category: string
+          id: string
+          level: number
+          name: string
+        }
+        Insert: {
+          category: string
+          id: string
+          level: number
+          name: string
+        }
+        Update: {
+          category?: string
+          id?: string
+          level?: number
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
