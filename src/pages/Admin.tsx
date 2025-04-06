@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -62,6 +61,7 @@ const Admin = () => {
   const [funFacts, setFunFacts] = useState<FunFact[]>([]);
   const [about, setAbout] = useState<About | null>(null);
   const [theme, setThemeState] = useState<ThemeConfig | null>(null);
+  const [currentTheme, setCurrentTheme] = useState<string>('light');
   
   // Edit states
   const [editMode, setEditMode] = useState<{
@@ -105,6 +105,11 @@ const Admin = () => {
       setFunFacts(funFactsData);
       setAbout(aboutData);
       setThemeState(themeData);
+      setCurrentTheme(themeData?.name || 'light');
+      
+      // Apply theme to document
+      document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-hacker');
+      document.documentElement.classList.add(`theme-${themeData?.name || 'light'}`);
       
     } catch (error) {
       toast({
@@ -418,8 +423,14 @@ const Admin = () => {
   // Change theme
   const changeTheme = async (themeName: string) => {
     try {
+      setLoading(true);
       const newTheme = await setTheme(themeName);
       setThemeState(newTheme);
+      setCurrentTheme(themeName);
+      
+      // Apply theme to document
+      document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-hacker');
+      document.documentElement.classList.add(`theme-${themeName}`);
       
       toast({
         title: "Theme changed",
@@ -433,6 +444,8 @@ const Admin = () => {
         variant: "destructive",
       });
       console.error("Error changing theme:", error);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -485,6 +498,7 @@ const Admin = () => {
                 onThemeChange={changeTheme}
                 onResumeDownload={handleResumeDownload}
                 loading={loading}
+                currentTheme={currentTheme}
               />
             </div>
             

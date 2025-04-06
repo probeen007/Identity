@@ -29,6 +29,7 @@ const useTerminalCommands = () => {
     document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-hacker');
     document.documentElement.classList.add(`theme-${themeName}`);
     localStorage.setItem('portfolio-theme', themeName);
+    console.log(`Theme applied: ${themeName}`);
   };
 
   // Helper function to create React elements from HTML strings
@@ -44,7 +45,6 @@ const useTerminalCommands = () => {
       
       setAsciiArt(art);
       setHelpContent(help);
-      setCurrentTheme(theme.name);
       
       // Apply the theme from local storage or default
       const savedTheme = localStorage.getItem('portfolio-theme') || theme.name;
