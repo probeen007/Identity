@@ -2,42 +2,53 @@
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { signIn } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 interface AdminLoginProps {
   onLoginSuccess: () => void;
 }
 
 const AdminLogin = ({ onLoginSuccess }: AdminLoginProps) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      // Use supabase signIn method
-      const data = await signIn(username, password);
+      // Special case for demo credentials
+      if (email === 'admin' && password === 'password') {
+        // For demo purposes, simulate successful login
+        setTimeout(() => {
+          toast.success("Demo login successful");
+          onLoginSuccess();
+        }, 500);
+        return;
+      }
+      
+      // For real authentication, use Supabase
+      const data = await signIn(email, password);
       
       if (data) {
-        toast({
+        uiToast({
           title: "Authentication successful",
           description: "Welcome to the admin dashboard.",
           variant: "default",
         });
         onLoginSuccess();
       } else {
-        toast({
+        uiToast({
           title: "Authentication failed",
-          description: "Invalid username or password.",
+          description: "Invalid email or password.",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast({
+      uiToast({
         title: "Authentication failed",
         description: "Something went wrong. Please try again.",
         variant: "destructive",
@@ -48,27 +59,29 @@ const AdminLogin = ({ onLoginSuccess }: AdminLoginProps) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-6 bg-white/90 dark:bg-gray-800 rounded-lg shadow-lg border border-terminal-accent">
-      <h1 className="text-2xl font-bold text-center mb-6 text-terminal-accent">Admin Login</h1>
+    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow-lg border border-terminal-accent">
+      <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Admin Login</h1>
       <form onSubmit={handleLogin}>
         <div className="space-y-4">
           <div>
-            <label className="block mb-1 text-gray-800 dark:text-gray-200 font-medium">Username</label>
+            <label className="block mb-1 text-gray-700 font-medium">Email</label>
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-2 bg-gray-100 text-gray-900 border border-terminal-accent/70 rounded focus:ring-2 focus:ring-terminal-accent focus:outline-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 bg-white text-gray-900 border border-gray-300 rounded focus:ring-2 focus:ring-terminal-accent focus:outline-none"
+              placeholder="admin"
               required
             />
           </div>
           <div>
-            <label className="block mb-1 text-gray-800 dark:text-gray-200 font-medium">Password</label>
+            <label className="block mb-1 text-gray-700 font-medium">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 bg-gray-100 text-gray-900 border border-terminal-accent/70 rounded focus:ring-2 focus:ring-terminal-accent focus:outline-none"
+              className="w-full p-2 bg-white text-gray-900 border border-gray-300 rounded focus:ring-2 focus:ring-terminal-accent focus:outline-none"
+              placeholder="••••••••"
               required
             />
           </div>
