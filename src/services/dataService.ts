@@ -9,7 +9,7 @@ import {
   FunFact,
   ThemeConfig
 } from '@/types';
-import { supabase, handleSupabaseError, setupRealtimeListener } from '@/lib/supabase';
+import { supabase, handleSupabaseError } from '@/lib/supabase';
 import { mockAbout, mockProjects, mockSkills, mockExperiences, mockCertificates, 
   mockRecommendations, mockFunFacts, asciiArt, helpContent, notFoundContent, welcomeMessage } from '@/utils/mockData';
 import { toast } from 'sonner';
@@ -71,12 +71,18 @@ export const initializeDatabase = async () => {
 // About data operations
 export const getAbout = async (): Promise<About> => {
   try {
+    console.log("Fetching about data from Supabase...");
     const { data, error } = await supabase
       .from('about')
       .select('*')
       .maybeSingle();
     
-    if (error) throw error;
+    if (error) {
+      console.error("Error fetching about data:", error);
+      throw error;
+    }
+    
+    console.log("About data fetched:", data);
     return data as About || mockAbout;
   } catch (error) {
     console.error("Error fetching about data:", error);
@@ -87,6 +93,7 @@ export const getAbout = async (): Promise<About> => {
 
 export const updateAbout = async (data: About): Promise<About> => {
   try {
+    console.log("Updating about data:", data);
     // First check if about data exists
     const existingData = await getAbout();
     
@@ -107,7 +114,12 @@ export const updateAbout = async (data: About): Promise<About> => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error updating about data:", error);
+        throw error;
+      }
+      
+      console.log("About data updated successfully:", updatedData);
       toast.success("About information updated");
       return updatedData as About;
     } else {
@@ -115,6 +127,7 @@ export const updateAbout = async (data: About): Promise<About> => {
       const { data: newData, error } = await supabase
         .from('about')
         .insert([{
+          id: `about-${Date.now()}`,
           name: data.name,
           title: data.title, 
           bio: data.bio,
@@ -126,11 +139,17 @@ export const updateAbout = async (data: About): Promise<About> => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error creating about data:", error);
+        throw error;
+      }
+      
+      console.log("About data created successfully:", newData);
       toast.success("About information created");
       return newData as About;
     }
   } catch (error) {
+    console.error("Error in updateAbout:", error);
     return handleSupabaseError(error, "Failed to update about data") || mockAbout;
   }
 };

@@ -1,176 +1,176 @@
+import { About, Project, Skill, Experience, Certificate, Recommendation, FunFact } from '@/types';
 
-import { 
-  About, 
-  Project, 
-  Skill, 
-  Experience, 
-  Certificate, 
-  Recommendation, 
-  FunFact 
-} from '@/types';
-
+// Mock About data
 export const mockAbout: About = {
-  name: "John Doe",
-  title: "Full Stack Developer",
-  bio: "I'm a passionate developer with expertise in building robust web applications. I specialize in React, Node.js, and modern web technologies. When I'm not coding, I enjoy hiking and playing chess.",
-  location: "San Francisco, CA",
-  email: "john.doe@example.com",
-  profileImageUrl: "/placeholder.svg", // Added profileImageUrl property
+  id: 'about-1', // Added the id property
+  name: 'Jane Doe',
+  title: 'Full Stack Developer & UI/UX Designer',
+  bio: 'Passionate developer with expertise in React, Node.js, and design systems. I love creating elegant solutions to complex problems.',
+  location: 'San Francisco, CA',
+  email: 'jane.doe@example.com',
+  profileImageUrl: '/placeholder.svg',
   socialLinks: {
-    github: "https://github.com/johndoe",
-    linkedin: "https://linkedin.com/in/johndoe",
-    twitter: "https://twitter.com/johndoe",
-    portfolio: "https://johndoe.com"
-  }
+    github: 'https://github.com/janedoe',
+    linkedin: 'https://linkedin.com/in/janedoe',
+    twitter: 'https://twitter.com/janedoe',
+    portfolio: 'https://janedoe.dev',
+  },
 };
 
+// Mock Projects data
 export const mockProjects: Project[] = [
   {
-    id: "1",
-    title: "E-commerce Platform",
-    description: "A full-featured e-commerce platform with payment processing, inventory management, and admin dashboard.",
-    technologies: ["React", "Node.js", "MongoDB", "Stripe"],
-    githubUrl: "https://github.com/johndoe/ecommerce",
-    demoUrl: "https://ecommerce-demo.johndoe.com"
+    id: 'project-1',
+    title: 'Terminal Portfolio',
+    description: 'A personal portfolio website built as a terminal application using React and TypeScript.',
+    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
+    githubUrl: 'https://github.com/example/terminal-portfolio',
+    demoUrl: 'https://terminal-portfolio.example.com',
+    imageUrl: '/project1.png',
   },
   {
-    id: "2",
-    title: "AI Content Generator",
-    description: "An AI-powered tool that generates blog posts, social media content, and marketing copy.",
-    technologies: ["Python", "TensorFlow", "React", "Flask"],
-    githubUrl: "https://github.com/johndoe/ai-content-generator"
+    id: 'project-2',
+    title: 'E-commerce Dashboard',
+    description: 'A comprehensive dashboard for managing an e-commerce platform, including sales analytics and inventory management.',
+    technologies: ['React', 'Node.js', 'Express', 'MongoDB'],
+    githubUrl: 'https://github.com/example/ecommerce-dashboard',
+    demoUrl: 'https://ecommerce-dashboard.example.com',
+    imageUrl: '/project2.png',
   },
   {
-    id: "3",
-    title: "Task Management App",
-    description: "A kanban-style task management application with team collaboration features.",
-    technologies: ["Vue.js", "Firebase", "Tailwind CSS"],
-    githubUrl: "https://github.com/johndoe/task-manager",
-    demoUrl: "https://task-app.johndoe.com"
-  }
+    id: 'project-3',
+    title: 'Mobile Task Manager',
+    description: 'A mobile application for managing tasks and projects on the go, built with React Native.',
+    technologies: ['React Native', 'Firebase', 'Redux'],
+    githubUrl: 'https://github.com/example/mobile-task-manager',
+    imageUrl: '/project3.png',
+  },
 ];
 
+// Mock Skills data
 export const mockSkills: Skill[] = [
-  { id: "1", name: "JavaScript", category: "Frontend", level: 90 },
-  { id: "2", name: "React", category: "Frontend", level: 85 },
-  { id: "3", name: "Node.js", category: "Backend", level: 80 },
-  { id: "4", name: "TypeScript", category: "Language", level: 75 },
-  { id: "5", name: "Python", category: "Language", level: 70 },
-  { id: "6", name: "MongoDB", category: "Database", level: 75 },
-  { id: "7", name: "PostgreSQL", category: "Database", level: 70 },
-  { id: "8", name: "Docker", category: "DevOps", level: 65 },
-  { id: "9", name: "AWS", category: "Cloud", level: 60 },
-  { id: "10", name: "GraphQL", category: "API", level: 80 }
+  {
+    id: 'skill-1',
+    name: 'React',
+    category: 'Frontend',
+    level: 90,
+  },
+  {
+    id: 'skill-2',
+    name: 'Node.js',
+    category: 'Backend',
+    level: 80,
+  },
+  {
+    id: 'skill-3',
+    name: 'UI/UX Design',
+    category: 'Design',
+    level: 75,
+  },
+  {
+    id: 'skill-4',
+    name: 'TypeScript',
+    category: 'Programming',
+    level: 85,
+  },
 ];
 
+// Mock Experiences data
 export const mockExperiences: Experience[] = [
   {
-    id: "1",
-    company: "Tech Innovations Inc.",
-    position: "Senior Frontend Developer",
-    duration: "2020 - Present",
-    description: "Lead the development of the company's main SaaS product, improving performance by 40% and implementing new features that increased user engagement by 25%."
+    id: 'exp-1',
+    company: 'Tech Innovations Inc.',
+    position: 'Senior Frontend Developer',
+    duration: '2018 - Present',
+    description: 'Led the development of multiple React-based web applications, focusing on performance optimization and UI/UX improvements.',
   },
   {
-    id: "2",
-    company: "WebSolutions Co.",
-    position: "Full Stack Developer",
-    duration: "2018 - 2020",
-    description: "Developed and maintained multiple client projects using React, Node.js, and MongoDB. Implemented CI/CD pipelines that reduced deployment time by 60%."
+    id: 'exp-2',
+    company: 'Global Solutions Ltd.',
+    position: 'UI/UX Designer',
+    duration: '2016 - 2018',
+    description: 'Designed and implemented user interfaces for web and mobile applications, collaborating with developers to ensure seamless integration.',
   },
-  {
-    id: "3",
-    company: "StartupXYZ",
-    position: "Junior Developer",
-    duration: "2016 - 2018",
-    description: "Worked on the company's mobile-responsive website and contributed to the development of internal tools."
-  }
 ];
 
+// Mock Certificates data
 export const mockCertificates: Certificate[] = [
   {
-    id: "1",
-    title: "AWS Certified Solutions Architect",
-    issuer: "Amazon Web Services",
-    date: "2022",
-    url: "https://aws.amazon.com/certification/"
+    id: 'cert-1',
+    title: 'Certified React Developer',
+    issuer: 'React University',
+    date: '2019',
+    url: 'https://example.com/react-certificate',
   },
   {
-    id: "2",
-    title: "Professional Full-Stack Engineer",
-    issuer: "Codecademy",
-    date: "2021",
-    url: "https://www.codecademy.com/"
+    id: 'cert-2',
+    title: 'UI/UX Design Professional',
+    issuer: 'Design Institute',
+    date: '2017',
+    url: 'https://example.com/uiux-certificate',
   },
-  {
-    id: "3",
-    title: "MongoDB Certified Developer",
-    issuer: "MongoDB University",
-    date: "2020",
-    url: "https://university.mongodb.com/"
-  }
 ];
 
+// Mock Recommendations data
 export const mockRecommendations: Recommendation[] = [
   {
-    id: "1",
-    name: "Jane Smith",
-    position: "CTO",
-    company: "Tech Innovations Inc.",
-    text: "John is an exceptional developer with a keen eye for detail. His ability to solve complex problems and deliver high-quality code consistently made him an invaluable asset to our team."
+    id: 'rec-1',
+    name: 'John Smith',
+    position: 'CTO',
+    company: 'Tech Innovations Inc.',
+    text: 'Jane is a highly skilled developer with a keen eye for design. She consistently delivers high-quality work and is a valuable asset to our team.',
   },
   {
-    id: "2",
-    name: "Mike Johnson",
-    position: "Product Manager",
-    company: "WebSolutions Co.",
-    text: "Working with John was a pleasure. His technical expertise combined with great communication skills helped us deliver projects on time and exceed client expectations."
-  }
+    id: 'rec-2',
+    name: 'Alice Johnson',
+    position: 'Project Manager',
+    company: 'Global Solutions Ltd.',
+    text: 'Jane is a talented UI/UX designer who is always willing to go the extra mile to ensure the success of our projects. Her creativity and attention to detail are truly impressive.',
+  },
 ];
 
+// Mock FunFacts data
 export const mockFunFacts: FunFact[] = [
-  { id: "1", text: "I once debugged code for 16 hours straight, fueled only by coffee and determination." },
-  { id: "2", text: "My first computer was a Commodore 64, which sparked my interest in programming." },
-  { id: "3", text: "I can type at 110 WPM, which comes in handy during intense coding sessions." },
-  { id: "4", text: "I've contributed to over 30 open-source projects in my free time." },
-  { id: "5", text: "I taught myself to code by building a game when I was 12 years old." }
+  {
+    id: 'funfact-1',
+    text: 'I can type over 80 words per minute.',
+  },
+  {
+    id: 'funfact-2',
+    text: 'I have contributed to over 20 open-source projects.',
+  },
+  {
+    id: 'funfact-3',
+    text: 'I love hiking and exploring new trails.',
+  },
 ];
 
+// Static content
 export const asciiArt = `
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-░░██╗░░██╗░█████╗░░█████╗░██╗░░██╗███████╗░
-░░██║░░██║██╔══██╗██╔══██╗██║░██╔╝██╔════╝░
-░░███████║███████║██║░░╚═╝█████═╝░█████╗░░░
-░░██╔══██║██╔══██║██║░░██╗██╔═██╗░██╔══╝░░░
-░░██║░░██║██║░░██║╚█████╔╝██║░╚██╗███████╗░
-░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝╚══════╝░
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+  _   _      _ _
+ | | | | ___| | |
+ | |_| |/ _ \\ | |
+ |  _  |  __/ | |
+ |_| |_|\\___|_|_|
 `;
 
 export const helpContent = `
 Available commands:
-
-about        - Display information about me
-projects     - List my projects
-skills       - Show my technical skills
-experience   - Show my work experience
-certificates - Display my certifications
-recommendations - Show testimonials from colleagues
-resume       - Download my resume
-contact      - Show contact information
-funfact      - Display a random fun fact
-clear        - Clear the terminal screen
-theme        - Change terminal theme
-help         - Show this help message
-
-Type a command and press Enter to execute.
+  - about: Display information about me
+  - projects: List my projects
+  - skills: List my skills
+  - experience: List my work experience
+  - certificates: List my certificates
+  - recommendations: List recommendations
+  - funfact: Display a fun fact about me
+  - clear: Clear the terminal
+  - help: Display this help message
 `;
 
 export const notFoundContent = `
-Command not found. Type 'help' to see available commands.
+Command not found. Type 'help' for a list of available commands.
 `;
 
 export const welcomeMessage = `
-Welcome to John Doe's terminal portfolio!
-Type 'help' to see available commands.
+Welcome to my terminal portfolio! Type 'help' for a list of available commands.
 `;

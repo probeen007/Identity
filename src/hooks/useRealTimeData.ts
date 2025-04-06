@@ -24,7 +24,9 @@ export const useRealTimeData = <T>(
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log(`Fetching ${tableName} data...`);
         const freshData = await fetchFunction();
+        console.log(`${tableName} data fetched:`, freshData);
         setData(freshData);
       } catch (error) {
         console.error(`Error fetching ${tableName}:`, error);
