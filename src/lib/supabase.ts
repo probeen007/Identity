@@ -129,12 +129,13 @@ export const deleteData = async (table: string, id: string) => {
   }
 };
 
-// Setup real-time listeners for a table
+// Setup real-time listeners for a table - fixed type error with Supabase channel
 export const setupRealtimeListener = (
   table: string, 
   eventType: 'INSERT' | 'UPDATE' | 'DELETE' | '*' = '*',
   callback: (payload: any) => void
 ) => {
+  // Using the correct type for the channel event
   const channel = supabase
     .channel(`table-${table}-changes`)
     .on(

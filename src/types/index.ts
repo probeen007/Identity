@@ -65,12 +65,13 @@ export interface Command {
 }
 
 export interface About {
+  id: string; // Added the id property
   name: string;
   title: string;
   bio: string;
   location: string;
   email: string;
-  profileImageUrl: string; // Changed from optional to required
+  profileImageUrl: string;
   socialLinks: {
     github?: string;
     linkedin?: string;

@@ -14,6 +14,7 @@ interface ContentTabsProps {
   onAdd: (type: 'project' | 'skill' | 'experience' | 'certificate' | 'recommendation' | 'funfact') => void;
   onEdit: (type: 'project' | 'skill' | 'experience' | 'certificate' | 'recommendation' | 'funfact', id: string) => void;
   onDelete: (type: 'project' | 'skill' | 'experience' | 'certificate' | 'recommendation' | 'funfact', id: string) => void;
+  loading?: boolean; // Added loading prop
 }
 
 const ContentTabs = ({
@@ -25,7 +26,8 @@ const ContentTabs = ({
   funFacts,
   onAdd,
   onEdit,
-  onDelete
+  onDelete,
+  loading = false // Default value
 }: ContentTabsProps) => {
   return (
     <Tabs defaultValue="projects" className="w-full">
