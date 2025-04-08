@@ -121,11 +121,14 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
                   ${isFullScreen ? 'fixed top-0 left-0 z-50 w-screen h-screen rounded-none' : ''}`}
     >
       {/* Terminal Header */}
-      <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm text-terminal-muted bg-black/40 flex justify-between items-center">
-        <span>
-          {activeSection ? `terminal@portfolio:~/${activeSection}` : 'terminal@portfolio:~'}
-        </span>
-        <div className="flex items-center space-x-2">
+      <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm bg-black/40 flex justify-between items-center">
+        <div className="w-20">
+          {/* Left section - empty for balance */}
+        </div>
+        <div className="flex-grow text-center text-terminal-muted">
+          <span>Terminal Portfolio</span>
+        </div>
+        <div className="flex items-center space-x-2 w-20 justify-end">
           {isFullScreen ? (
             <button 
               onClick={toggleFullScreen}
