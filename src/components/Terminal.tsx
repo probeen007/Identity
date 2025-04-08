@@ -99,13 +99,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
     );
     
     setIsLoading(false);
-    
-    // Auto-scroll to bottom after command execution
-    setTimeout(() => {
-      if (terminalRef.current) {
-        terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-      }
-    }, 50);
   };
 
   const toggleFullScreen = () => {
@@ -121,34 +114,39 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
                   ${isFullScreen ? 'fixed top-0 left-0 z-50 w-screen h-screen rounded-none' : ''}`}
     >
       {/* Terminal Header */}
-      <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm text-terminal-muted bg-black/40 flex justify-between items-center">
-        <span>
-          {activeSection ? `terminal@portfolio:~/${activeSection}` : 'terminal@portfolio:~'}
-        </span>
+      <div className="bg-terminal-accent px-4 py-2 flex items-center">
+        <div className="flex gap-2 mr-4">
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div className="flex-grow text-center text-terminal-background font-bold">
+          Terminal - Portfolio
+        </div>
         <div className="flex items-center space-x-2">
           {isFullScreen ? (
             <button 
               onClick={toggleFullScreen}
-              className="p-1 hover:bg-terminal-accent/20 rounded-md" 
+              className="p-1 hover:bg-terminal-background/20 rounded-md" 
               aria-label="Exit Full Screen"
             >
-              <Minimize className="w-4 h-4 text-terminal-accent" />
+              <Minimize className="w-4 h-4 text-terminal-background" />
             </button>
           ) : (
             <button 
               onClick={toggleFullScreen}
-              className="p-1 hover:bg-terminal-accent/20 rounded-md" 
+              className="p-1 hover:bg-terminal-background/20 rounded-md" 
               aria-label="Full Screen"
             >
-              <Maximize className="w-4 h-4 text-terminal-accent" />
+              <Maximize className="w-4 h-4 text-terminal-background" />
             </button>
           )}
           <button 
             onClick={onClose}
-            className="p-1 hover:bg-terminal-accent/20 rounded-md" 
+            className="p-1 hover:bg-terminal-background/20 rounded-md" 
             aria-label="Close Terminal"
           >
-            <X className="w-4 h-4 text-terminal-accent" />
+            <X className="w-4 h-4 text-terminal-background" />
           </button>
         </div>
       </div>
