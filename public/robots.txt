@@ -1,3 +1,12 @@
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemaps
+# Sitemap: https://terminal-portfolio.lovable.dev/sitemap.xml
+
+# Specific crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +19,6 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Disallow specific paths if needed
+# Disallow: /admin/
+# Disallow: /private/

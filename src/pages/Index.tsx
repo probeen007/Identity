@@ -60,24 +60,11 @@ const Index = () => {
               transition={{ duration: 0.4 }}
               className="w-full max-w-5xl h-[80vh] rounded-lg border border-terminal-accent shadow-lg overflow-hidden"
             >
-              <div className="bg-terminal-accent px-4 py-2 flex items-center">
-                <div className="flex gap-2 mr-4">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-                <div className="flex-grow text-center text-terminal-background font-bold">
-                  Terminal - Portfolio
-                </div>
-              </div>
-              
-              <div className="h-[calc(100%-2.5rem)]">
-                <Terminal 
-                  welcomeMessage={welcomeMessage} 
-                  availableCommands={commands} 
-                  onClose={handleCloseTerminal}
-                />
-              </div>
+              <Terminal 
+                welcomeMessage={welcomeMessage} 
+                availableCommands={commands} 
+                onClose={handleCloseTerminal}
+              />
             </motion.div>
           )}
         </AnimatePresence>
