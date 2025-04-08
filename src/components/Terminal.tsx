@@ -4,11 +4,12 @@ import { CommandOutput, Command as CommandType } from '@/types';
 import TerminalOutput from './TerminalOutput';
 import TerminalPrompt from './TerminalPrompt';
 import { motion } from 'framer-motion';
-import { CommandIcon } from 'lucide-react';
+import { X, Maximize, Minimize } from 'lucide-react';
 
 interface TerminalProps {
   welcomeMessage: string;
   availableCommands: CommandType[];
+  onClose?: () => void;
 }
 
 interface CommandHistoryItem {
@@ -16,10 +17,11 @@ interface CommandHistoryItem {
   output: CommandOutput;
 }
 
-const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands }) => {
+const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, onClose }) => {
   const [commandHistory, setCommandHistory] = useState<CommandHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
 
   // Add welcome message to command history on mount
@@ -97,6 +99,17 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands }
     );
     
     setIsLoading(false);
+    
+    // Auto-scroll to bottom after command execution
+    setTimeout(() => {
+      if (terminalRef.current) {
+        terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+      }
+    }, 50);
+  };
+
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
   };
 
   return (
@@ -104,11 +117,40 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="w-full h-full bg-terminal-background text-terminal-foreground rounded-md overflow-hidden flex flex-col"
+      className={`w-full h-full bg-terminal-background text-terminal-foreground rounded-md overflow-hidden flex flex-col 
+                  ${isFullScreen ? 'fixed top-0 left-0 z-50 w-screen h-screen rounded-none' : ''}`}
     >
       {/* Terminal Header */}
-      <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm text-terminal-muted bg-black/40">
-        {activeSection ? `terminal@portfolio:~/${activeSection}` : 'terminal@portfolio:~'}
+      <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm text-terminal-muted bg-black/40 flex justify-between items-center">
+        <span>
+          {activeSection ? `terminal@portfolio:~/${activeSection}` : 'terminal@portfolio:~'}
+        </span>
+        <div className="flex items-center space-x-2">
+          {isFullScreen ? (
+            <button 
+              onClick={toggleFullScreen}
+              className="p-1 hover:bg-terminal-accent/20 rounded-md" 
+              aria-label="Exit Full Screen"
+            >
+              <Minimize className="w-4 h-4 text-terminal-accent" />
+            </button>
+          ) : (
+            <button 
+              onClick={toggleFullScreen}
+              className="p-1 hover:bg-terminal-accent/20 rounded-md" 
+              aria-label="Full Screen"
+            >
+              <Maximize className="w-4 h-4 text-terminal-accent" />
+            </button>
+          )}
+          <button 
+            onClick={onClose}
+            className="p-1 hover:bg-terminal-accent/20 rounded-md" 
+            aria-label="Close Terminal"
+          >
+            <X className="w-4 h-4 text-terminal-accent" />
+          </button>
+        </div>
       </div>
       
       {/* Terminal Content */}

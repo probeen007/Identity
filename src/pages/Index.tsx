@@ -24,6 +24,10 @@ const Index = () => {
     setShowTerminal(true);
   };
 
+  const handleCloseTerminal = () => {
+    setShowTerminal(false);
+  };
+
   if (loading || !welcomeMessage) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-terminal-background">
@@ -71,6 +75,7 @@ const Index = () => {
                 <Terminal 
                   welcomeMessage={welcomeMessage} 
                   availableCommands={commands} 
+                  onClose={handleCloseTerminal}
                 />
               </div>
             </motion.div>
