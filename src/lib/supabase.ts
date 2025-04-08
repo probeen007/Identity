@@ -139,10 +139,10 @@ export const setupRealtimeListener = (
     .channel(`table-${table}-changes`)
     .on(
       'postgres_changes',
-      {
-        event: eventType,
-        schema: 'public',
-        table: table
+      { 
+        event: eventType, 
+        schema: 'public', 
+        table 
       },
       (payload) => {
         console.log('Real-time update received:', payload);
