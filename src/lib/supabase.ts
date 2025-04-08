@@ -138,7 +138,7 @@ export const setupRealtimeListener = (
   const channel = supabase
     .channel(`table-${table}-changes`)
     .on(
-      'postgres_changes',
+      'postgres_changes', // Use as string literal, not as a type parameter
       { 
         event: eventType, 
         schema: 'public', 
