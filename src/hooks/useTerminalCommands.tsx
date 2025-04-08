@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Command } from '@/types';
 import {
@@ -340,7 +339,7 @@ const useTerminalCommands = () => {
                 <p className="text-terminal-accent font-bold mb-1">Did you know?</p>
                 <p>{fact.text}</p>
               </div>
-            )
+            ) as React.ReactNode
           };
         }
       },
