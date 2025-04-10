@@ -114,8 +114,8 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
       className={`w-full h-full bg-terminal-background text-terminal-foreground rounded-md overflow-hidden flex flex-col 
                   ${isFullScreen ? 'fixed top-0 left-0 z-50 w-screen h-screen rounded-none' : ''}`}
     >
-      {/* Terminal Header */}
-      <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm bg-black/40 flex justify-between items-center">
+      {/* Terminal Header - Fixed at the top */}
+      <div className="sticky top-0 z-20 p-2 border-b border-terminal-accent/30 font-mono text-sm bg-black/40 backdrop-blur-sm flex justify-between items-center">
         <div className="w-20 flex items-center space-x-2 pl-2">
           <div className="h-3 w-3 rounded-full bg-red-500"></div>
           <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
@@ -152,8 +152,8 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
         </div>
       </div>
       
-      {/* Terminal Content */}
-      <div className="flex-1 flex flex-col p-4">
+      {/* Terminal Content - Scrollable area */}
+      <div className="flex-1 flex flex-col p-4 overflow-hidden">
         <div 
           ref={terminalRef}
           className="flex-grow overflow-y-auto overflow-x-hidden pb-4 scrollbar-none"

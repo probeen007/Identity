@@ -9,6 +9,7 @@ import App from './App.tsx';
 import './index.css';
 import NotFound from './pages/NotFound.tsx';
 import Index from './pages/Index.tsx';
+import AdminPage from './pages/AdminPage.tsx';
 
 // Create a query client
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route path="/" element={<App />}>
               <Route index element={<Index />} />
+              <Route path="admin" element={<AdminPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
