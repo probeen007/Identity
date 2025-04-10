@@ -3,9 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CommandOutput, Command as CommandType } from '@/types';
 import TerminalOutput from './TerminalOutput';
 import TerminalPrompt from './TerminalPrompt';
-import ResumeSettings from './ResumeSettings';
 import { motion } from 'framer-motion';
-import { X, Maximize, Minimize, Settings } from 'lucide-react';
+import { X, Maximize, Minimize } from 'lucide-react';
 
 interface TerminalProps {
   welcomeMessage: string;
@@ -23,7 +22,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
   const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -108,10 +106,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
     setIsFullScreen(!isFullScreen);
   };
 
-  const toggleSettings = () => {
-    setShowSettings(!showSettings);
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -131,13 +125,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
           <span>Terminal Portfolio</span>
         </div>
         <div className="flex items-center space-x-2 w-20 justify-end">
-          <button 
-            onClick={toggleSettings}
-            className="p-1 hover:bg-terminal-accent/20 rounded-md" 
-            aria-label="Settings"
-          >
-            <Settings className="w-4 h-4 text-terminal-accent" />
-          </button>
           {isFullScreen ? (
             <button 
               onClick={toggleFullScreen}
@@ -184,9 +171,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
             </div>
           ))}
           <div ref={bottomRef} /> {/* Empty div for auto-scrolling */}
-          
-          {/* Resume Settings Component */}
-          <ResumeSettings isVisible={showSettings} />
         </div>
         
         <TerminalPrompt 

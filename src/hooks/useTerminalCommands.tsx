@@ -17,6 +17,7 @@ import {
   setTheme,
   getTheme
 } from '@/services/dataService';
+import useResumeConfig from './useResumeConfig';
 
 const useTerminalCommands = () => {
   const [commands, setCommands] = useState<Command[]>([]);
@@ -24,6 +25,7 @@ const useTerminalCommands = () => {
   const [helpContent, setHelpContent] = useState('');
   const [welcomeMessage, setWelcomeMessage] = useState('');
   const [currentTheme, setCurrentTheme] = useState<string>('hacker');
+  const { resumeUrl } = useResumeConfig();
 
   // Function to apply theme to the document
   const applyTheme = (themeName: string) => {
@@ -65,9 +67,8 @@ const useTerminalCommands = () => {
     if (!asciiArt || !helpContent) return;
 
     // Add global window function for resume download
-    window.downloadResume = async (resumeUrl) => {
+    window.downloadResume = async () => {
       try {
-        // If a URL is provided, open it in a new tab
         if (resumeUrl) {
           window.open(resumeUrl, '_blank');
         }
@@ -270,8 +271,6 @@ const useTerminalCommands = () => {
         command: 'resume',
         description: 'Download my resume',
         handler: async () => {
-          // You can replace this URL with your actual Google Drive resume link
-          const resumeUrl = "https://drive.google.com/your-resume-link-here";
           const message = await downloadResume();
           
           return {
@@ -290,7 +289,7 @@ const useTerminalCommands = () => {
                   If the download doesn't start automatically, 
                   <a href={resumeUrl} className="text-terminal-accent hover:underline ml-1" target="_blank" onClick={(e) => {
                     e.preventDefault();
-                    window.downloadResume(resumeUrl);
+                    window.downloadResume();
                   }}>
                     click here
                   </a>.
@@ -545,7 +544,7 @@ const useTerminalCommands = () => {
     ];
 
     setCommands(commandsList);
-  }, [asciiArt, helpContent, currentTheme, navigate]);
+  }, [asciiArt, helpContent, currentTheme, navigate, resumeUrl]);
 
   return { commands, welcomeMessage };
 };
