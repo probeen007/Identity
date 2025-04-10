@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Command } from '@/types';
+import { useNavigate } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 import {
   getAbout,
   getProjects,
@@ -35,6 +37,9 @@ const useTerminalCommands = () => {
   const createMarkup = (htmlContent: string) => {
     return { __html: htmlContent };
   };
+  
+  // Add the navigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,8 +65,12 @@ const useTerminalCommands = () => {
     if (!asciiArt || !helpContent) return;
 
     // Add global window function for resume download
-    window.downloadResume = async () => {
+    window.downloadResume = async (resumeUrl) => {
       try {
+        // If a URL is provided, open it in a new tab
+        if (resumeUrl) {
+          window.open(resumeUrl, '_blank');
+        }
         const message = await downloadResume();
         console.log("Resume download initiated:", message);
       } catch (error) {
@@ -261,18 +270,27 @@ const useTerminalCommands = () => {
         command: 'resume',
         description: 'Download my resume',
         handler: async () => {
+          // You can replace this URL with your actual Google Drive resume link
+          const resumeUrl = "https://drive.google.com/your-resume-link-here";
           const message = await downloadResume();
+          
           return {
             type: 'success',
             content: (
-              <div className="bg-hacker-light p-4 rounded-md border border-terminal-accent text-center">
+              <div className="bg-hacker-light p-4 rounded-md border border-terminal-accent">
+                <div className="font-mono text-xs mb-4">
+                  <p className="text-terminal-accent">$ wget resume.pdf</p>
+                  <p className="text-terminal-info">Connecting to server...</p>
+                  <p className="text-terminal-info">Downloading resume.pdf...</p>
+                  <p className="text-terminal-success">Download complete!</p>
+                </div>
                 <p className="text-terminal-success mb-2">{message}</p>
                 <p>Your browser should start downloading the resume file shortly.</p>
                 <p className="text-terminal-muted text-sm mt-2">
                   If the download doesn't start automatically, 
-                  <a href="#" className="text-terminal-accent hover:underline ml-1" onClick={(e) => {
+                  <a href={resumeUrl} className="text-terminal-accent hover:underline ml-1" target="_blank" onClick={(e) => {
                     e.preventDefault();
-                    window.downloadResume();
+                    window.downloadResume(resumeUrl);
                   }}>
                     click here
                   </a>.
@@ -441,22 +459,16 @@ const useTerminalCommands = () => {
         command: 'sudo',
         description: 'Run command with admin privileges',
         handler: async (args) => {
-          if (args && args.length > 0 && args[0] === 'gimmeajob') {
-            return {
-              type: 'error',
-              content: (
-                <div className="bg-hacker-light p-4 rounded-md border border-terminal-error">
-                  <p className="text-terminal-error">Permission denied: Nice try!</p>
-                </div>
-              )
-            };
-          }
-          
           return {
-            type: 'warning',
+            type: 'error',
             content: (
-              <div className="bg-hacker-light p-4 rounded-md border border-terminal-warning">
-                <p className="text-terminal-warning">sudo: This incident will be reported.</p>
+              <div className="bg-hacker-light p-4 rounded-md border border-terminal-error">
+                <p className="text-terminal-error mb-2 flex items-center">
+                  <AlertTriangle className="w-5 h-5 mr-2" /> You are not my admin!
+                </p>
+                <p className="text-terminal-warning">
+                  Don't dare to type this command again. This incident will be reported.
+                </p>
               </div>
             )
           };
@@ -511,12 +523,20 @@ const useTerminalCommands = () => {
         command: 'admin',
         description: 'Go to admin dashboard',
         handler: async () => {
+          // Use setTimeout to show message before redirecting
+          setTimeout(() => {
+            navigate('/admin');
+          }, 1000);
+          
           return {
-            type: 'info',
+            type: 'warning',
             content: (
-              <div className="bg-hacker-light p-4 rounded-md border border-terminal-accent">
-                <p className="mb-2">Redirecting to admin dashboard...</p>
-                <p>Visit <a href="/admin" className="text-terminal-accent hover:underline">/admin</a> to access the administration panel.</p>
+              <div className="bg-hacker-light p-4 rounded-md border border-terminal-warning">
+                <p className="mb-2 text-terminal-warning">WARNING: Unauthorized access attempt detected!</p>
+                <p className="text-terminal-info">Redirecting to admin portal...</p>
+                <div className="loading-bar mt-2 h-1 bg-terminal-muted overflow-hidden">
+                  <div className="h-full bg-terminal-warning animate-pulse"></div>
+                </div>
               </div>
             )
           };
@@ -525,7 +545,7 @@ const useTerminalCommands = () => {
     ];
 
     setCommands(commandsList);
-  }, [asciiArt, helpContent, currentTheme, commands]);
+  }, [asciiArt, helpContent, currentTheme, navigate]);
 
   return { commands, welcomeMessage };
 };
