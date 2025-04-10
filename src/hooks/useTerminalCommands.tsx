@@ -435,13 +435,14 @@ const useTerminalCommands = () => {
         command: 'help',
         description: 'Show this help message',
         handler: async () => {
+          // Fixed help command to display all commands properly
           return {
             type: 'info',
             content: (
               <div className="bg-hacker-light p-4 rounded-md border border-terminal-accent">
-                <h2 className="text-lg font-bold text-terminal-accent mb-2">Available Commands</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {commands.map((cmd, index) => (
+                <h2 className="text-lg font-bold text-terminal-accent mb-3">Available Commands</h2>
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+                  {commandsList.map((cmd, index) => (
                     <div key={index} className="p-2 hover:bg-hacker-dark transition-colors rounded">
                       <p className="font-bold text-terminal-accent">{cmd.command}</p>
                       <p className="text-sm">{cmd.description}</p>

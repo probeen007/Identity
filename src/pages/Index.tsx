@@ -1,21 +1,27 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Terminal from '@/components/Terminal';
 import MatrixBackground from '@/components/MatrixBackground';
 import useTerminalCommands from '@/hooks/useTerminalCommands';
 import WelcomeSection from '@/components/WelcomeSection';
 import { motion, AnimatePresence } from 'framer-motion';
+import useMobile from '@/hooks/use-mobile';
 
+// Use lazy loading for non-critical components
 const Index = () => {
   const { commands, welcomeMessage } = useTerminalCommands();
   const [loading, setLoading] = useState(true);
   const [showTerminal, setShowTerminal] = useState(false);
+  const isMobile = useMobile();
 
   useEffect(() => {
-    // Simulate loading time
+    // Add meta tags for SEO
+    document.title = 'Terminal Portfolio | Interactive Developer Resume';
+    
+    // Simulate loading time - reduced for faster startup
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, []);
@@ -57,8 +63,8 @@ const Index = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.4 }}
-              className="w-full max-w-5xl h-[80vh] rounded-lg border border-terminal-accent shadow-lg overflow-hidden"
+              transition={{ duration: 0.3 }}
+              className={`w-full ${isMobile ? 'h-[85vh]' : 'max-w-5xl h-[80vh]'} rounded-lg border border-terminal-accent shadow-lg overflow-hidden`}
             >
               <Terminal 
                 welcomeMessage={welcomeMessage} 
@@ -72,7 +78,7 @@ const Index = () => {
       
       <footer className="p-4 text-center text-terminal-accent text-sm z-10 relative">
         <p className="glitch-effect">
-          {showTerminal ? "Type 'help' for available commands or use the sidebar" : "Click Open Terminal to begin"}
+          {showTerminal ? "Type 'help' for available commands" : "Click Open Terminal to begin"}
         </p>
       </footer>
     </div>

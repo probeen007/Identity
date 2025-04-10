@@ -20,10 +20,22 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Focus the input element when the component mounts
-    if (inputRef.current) {
+    // Focus the input element when the component mounts and when not on mobile
+    if (inputRef.current && window.innerWidth > 768) {
       inputRef.current.focus();
     }
+  }, []);
+
+  // Re-focus on input when clicking anywhere in the terminal area
+  useEffect(() => {
+    const handleClick = () => {
+      if (inputRef.current && window.innerWidth > 768) {
+        inputRef.current.focus();
+      }
+    };
+    
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +105,7 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
   };
 
   return (
-    <div className="flex items-center mt-2 group">
+    <div className="flex items-center mt-2 group relative">
       <span className="terminal-prompt mr-2">visitor@portfolio:~$</span>
       <div className="relative flex-grow">
         <div className="flex">
@@ -108,7 +120,7 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
               disabled={isLoading}
               aria-label="Terminal command input"
               autoComplete="off"
-              autoFocus
+              autoFocus={window.innerWidth > 768}
               style={{ caretColor: 'transparent' }}
             />
             {/* Inline suggestion */}
@@ -128,6 +140,25 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* Mobile send button */}
+      {window.innerWidth <= 768 && (
+        <button 
+          onClick={() => {
+            if (input.trim() && !isLoading) {
+              onCommand(input.trim());
+              setCommandHistory(prev => [...prev, input.trim()]);
+              setHistoryIndex(-1);
+              setInput('');
+              setSuggestions([]);
+            }
+          }}
+          className="ml-2 px-2 py-1 bg-terminal-accent/20 text-terminal-accent rounded-md"
+          disabled={isLoading || !input.trim()}
+        >
+          Send
+        </button>
+      )}
     </div>
   );
 };

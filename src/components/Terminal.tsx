@@ -110,7 +110,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
       className={`w-full h-full bg-terminal-background text-terminal-foreground rounded-md overflow-hidden flex flex-col 
                   ${isFullScreen ? 'fixed top-0 left-0 z-50 w-screen h-screen rounded-none' : ''}`}
     >
@@ -160,7 +160,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
           style={{ maxHeight: 'calc(100vh - 8rem)' }}
         >
           {commandHistory.map((item, index) => (
-            <div key={index}>
+            <div key={index} className="mb-2">
               {item.command && (
                 <div className="flex items-center">
                   <span className="terminal-prompt mr-2">visitor@portfolio:~$</span>
