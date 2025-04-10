@@ -23,6 +23,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
   const [activeSection, setActiveSection] = useState<string>('');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // Add welcome message to command history on mount
   useEffect(() => {
@@ -39,8 +40,8 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
 
   // Auto-scroll to bottom on new commands
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [commandHistory]);
 
@@ -99,13 +100,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
     );
     
     setIsLoading(false);
-    
-    // Auto-scroll to bottom after command execution
-    setTimeout(() => {
-      if (terminalRef.current) {
-        terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-      }
-    }, 50);
   };
 
   const toggleFullScreen = () => {
@@ -122,8 +116,10 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
     >
       {/* Terminal Header */}
       <div className="p-2 border-b border-terminal-accent/30 font-mono text-sm bg-black/40 flex justify-between items-center">
-        <div className="w-20">
-          {/* Left section - empty for balance */}
+        <div className="w-20 flex items-center space-x-2 pl-2">
+          <div className="h-3 w-3 rounded-full bg-red-500"></div>
+          <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+          <div className="h-3 w-3 rounded-full bg-green-500"></div>
         </div>
         <div className="flex-grow text-center text-terminal-muted">
           <span>Terminal Portfolio</span>
@@ -174,6 +170,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
               <TerminalOutput output={item.output} />
             </div>
           ))}
+          <div ref={bottomRef} /> {/* Empty div for auto-scrolling */}
         </div>
         
         <TerminalPrompt 
