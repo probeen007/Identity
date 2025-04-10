@@ -7,9 +7,30 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
+interface UserInfo {
+  userAgent: string;
+  language: string;
+  platform: string;
+  screenWidth: number;
+  screenHeight: number;
+  timeZone: string;
+  referrer: string;
+  currentTime: string;
+  ip?: string; // Make IP optional since it might not be available
+}
+
 const AdminPage: React.FC = () => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState<any>({});
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    userAgent: '',
+    language: '',
+    platform: '',
+    screenWidth: 0,
+    screenHeight: 0,
+    timeZone: '',
+    referrer: '',
+    currentTime: '',
+  });
   const [showUserInfo, setShowUserInfo] = useState(false);
   const [warningLevel, setWarningLevel] = useState(1);
   const [countdown, setCountdown] = useState(30);
@@ -20,7 +41,7 @@ const AdminPage: React.FC = () => {
     const getUserInfo = async () => {
       try {
         // Get basic browser information
-        const info = {
+        const info: UserInfo = {
           userAgent: navigator.userAgent,
           language: navigator.language,
           platform: navigator.platform,
@@ -44,7 +65,17 @@ const AdminPage: React.FC = () => {
         setUserInfo(info);
       } catch (error) {
         console.error('Error getting user info:', error);
-        setUserInfo({ error: 'Failed to collect information' });
+        setUserInfo({ 
+          userAgent: 'Error', 
+          language: 'Error', 
+          platform: 'Error',
+          screenWidth: 0,
+          screenHeight: 0,
+          timeZone: 'Error',
+          referrer: 'Error',
+          currentTime: 'Error',
+          ip: 'Error'
+        });
       }
     };
 
