@@ -19,6 +19,9 @@ import {
 } from '@/services/dataService';
 import useResumeConfig from './useResumeConfig';
 
+// Central event dispatcher for matrix effects
+export const matrixEffectEvent = new EventTarget();
+
 const useTerminalCommands = () => {
   const [commands, setCommands] = useState<Command[]>([]);
   const [asciiArt, setAsciiArt] = useState('');
@@ -476,44 +479,163 @@ const useTerminalCommands = () => {
       },
       {
         command: 'matrix',
-        description: 'Activate matrix mode',
-        handler: async () => {
-          return {
-            type: 'success',
-            content: (
-              <div className="bg-hacker-light p-4 rounded-md border border-terminal-accent">
-                <p className="text-terminal-success">Matrix mode activated. There is no spoon.</p>
-                <div className="mt-2 flex justify-center">
-                  <div className="terminal-matrix-animation h-20 w-full overflow-hidden relative">
-                    <div className="absolute inset-0 matrix-code-rain"></div>
+        description: 'Activate interactive matrix mode',
+        usage: 'matrix [speed|density|toggle]',
+        handler: async (args) => {
+          if (!args || args.length === 0) {
+            // Trigger matrix effect
+            matrixEffectEvent.dispatchEvent(new CustomEvent('matrixActivate', { 
+              detail: { fullscreen: true }
+            }));
+            
+            return {
+              type: 'success',
+              content: (
+                <div className="bg-hacker-light p-4 rounded-md border border-terminal-accent">
+                  <p className="text-terminal-success mb-3">Matrix mode activated. There is no spoon.</p>
+                  <div className="mt-2 flex flex-col gap-2">
+                    <p className="text-terminal-info">Available subcommands:</p>
+                    <ul className="list-disc pl-5">
+                      <li><span className="text-terminal-accent">matrix speed [number]</span> - Set animation speed (lower = faster)</li>
+                      <li><span className="text-terminal-accent">matrix density [number]</span> - Set character density</li>
+                      <li><span className="text-terminal-accent">matrix toggle</span> - Toggle matrix background on/off</li>
+                    </ul>
+                    <p className="text-terminal-muted mt-2">Try moving your mouse over the matrix background!</p>
                   </div>
                 </div>
-              </div>
-            )
+              )
+            };
+          }
+          
+          const subCommand = args[0].toLowerCase();
+          
+          if (subCommand === 'speed' && args.length > 1) {
+            const speedValue = parseInt(args[1]);
+            if (!isNaN(speedValue) && speedValue > 0) {
+              matrixEffectEvent.dispatchEvent(new CustomEvent('matrixSpeed', { 
+                detail: { speed: speedValue }
+              }));
+              return {
+                type: 'success',
+                content: `Matrix animation speed set to ${speedValue}ms`
+              };
+            }
+            return {
+              type: 'error',
+              content: 'Invalid speed value. Please use a positive number.'
+            };
+          }
+          
+          if (subCommand === 'density' && args.length > 1) {
+            const densityValue = parseInt(args[1]);
+            if (!isNaN(densityValue) && densityValue > 0) {
+              matrixEffectEvent.dispatchEvent(new CustomEvent('matrixDensity', { 
+                detail: { density: densityValue }
+              }));
+              return {
+                type: 'success',
+                content: `Matrix character density set to ${densityValue}`
+              };
+            }
+            return {
+              type: 'error',
+              content: 'Invalid density value. Please use a positive number.'
+            };
+          }
+          
+          if (subCommand === 'toggle') {
+            matrixEffectEvent.dispatchEvent(new CustomEvent('matrixToggle'));
+            return {
+              type: 'success',
+              content: 'Matrix background toggled'
+            };
+          }
+          
+          return {
+            type: 'error',
+            content: `Unknown matrix subcommand: ${subCommand}. Try 'matrix' without arguments for help.`
           };
         }
       },
+      
       {
         command: 'hack',
         description: 'Hack the mainframe',
-        handler: async () => {
+        usage: 'hack [target]',
+        handler: async (args) => {
+          const target = args?.length > 0 ? args[0].toLowerCase() : 'mainframe';
+          const hackMessages: Record<string, string[]> = {
+            'mainframe': [
+              'Initializing hack sequence...',
+              'Bypassing firewall protocols...',
+              'Searching for vulnerabilities in the mainframe...',
+              'Planting backdoor access...',
+              'WARNING: Intrusion detected!',
+              'Deploying countermeasures...',
+              'Security protocols engaged',
+              'Trace initiated',
+              'Connection terminated'
+            ],
+            'pentagon': [
+              'Targeting Pentagon systems...',
+              'Bypassing military-grade encryption...',
+              'Accessing classified documents...',
+              'WARNING: ADVANCED SECURITY DETECTED',
+              'Multiple firewalls activated',
+              'Deploying stealth protocols...',
+              'Evading detection algorithms...',
+              'CRITICAL: Access denied',
+              'Emergency shutdown initiated',
+              'System lockdown. Exiting.'
+            ],
+            'nasa': [
+              'Targeting NASA network...',
+              'Bypassing satellite security...',
+              'Accessing space station controls...',
+              'Downloading cosmic data...',
+              'WARNING: Alien signatures detected',
+              'Unknown encryption encountered',
+              'Unusual patterns detected',
+              'ALERT: NASA security alerted',
+              'System locked. Connection lost.'
+            ],
+            'matrix': [
+              'Initializing redpill sequence...',
+              'Searching for glitches in the Matrix...',
+              'Contacting Morpheus...',
+              'WARNING: Agents detected',
+              'Running from Agent Smith...',
+              'Dodging bullets in slow motion...',
+              'Finding the nearest exit...',
+              'Connection terminated. Wake up, Neo.'
+            ]
+          };
+          
+          // Set default messages if target isn't recognized
+          const messages = hackMessages[target] || hackMessages.mainframe;
+          
+          // Add some visual effects during the hack
+          setTimeout(() => {
+            matrixEffectEvent.dispatchEvent(new CustomEvent('matrixActivate', { 
+              detail: { fullscreen: true, duration: 5000 }
+            }));
+          }, 1000);
+
           return {
             type: 'warning',
             content: (
               <div className="bg-hacker-light p-4 rounded-md border border-terminal-warning">
-                <p className="text-terminal-warning mb-2">ALERT: Unauthorized access detected. Initiating countermeasures...</p>
-                <div className="hack-animation p-2 font-mono text-xs overflow-hidden h-20">
-                  <div className="hack-text">
-                    $ initiating hack sequence...<br />
-                    $ bypassing firewall...<br />
-                    $ searching for vulnerabilities...<br />
-                    $ accessing mainframe...<br />
-                    $ WARNING: intrusion detected!<br />
-                    $ security protocols engaged<br />
-                    $ trace initiated<br />
-                    $ connection terminated
+                <p className="text-terminal-warning mb-2">ALERT: Unauthorized access detected for target: {target}</p>
+                <div className="hack-animation p-2 font-mono text-xs overflow-hidden h-28">
+                  <div className="hack-text-interactive">
+                    {messages.map((msg, index) => (
+                      <div key={index} className="hack-line" style={{ animationDelay: `${index * 0.7}s` }}>
+                        $ {msg}
+                      </div>
+                    ))}
                   </div>
                 </div>
+                <p className="text-terminal-muted mt-2 text-xs">Try hacking other targets: pentagon, nasa, matrix</p>
               </div>
             )
           };

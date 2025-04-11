@@ -237,6 +237,38 @@
     --terminal-info: #1C8CFF;
     --terminal-muted: #505050;
   }
+
+  /* Hack Animation - Interactive */
+  .hack-text-interactive {
+    @apply overflow-hidden;
+  }
+
+  .hack-line {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hackLine 1s forwards;
+  }
+
+  @keyframes hackLine {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Matrix Fullscreen Mode */
+  .matrix-fullscreen {
+    @apply fixed inset-0 z-50 bg-black;
+  }
+
+  /* Enhanced Matrix Animation */
+  .matrix-background.interactive {
+    cursor: crosshair;
+  }
 }
 
 /* Table styling for admin panel */

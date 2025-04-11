@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useRef } from 'react';
 import Terminal from '@/components/Terminal';
 import MatrixBackground from '@/components/MatrixBackground';
-import useTerminalCommands from '@/hooks/useTerminalCommands';
+import useTerminalCommands, { matrixEffectEvent } from '@/hooks/useTerminalCommands';
 import WelcomeSection from '@/components/WelcomeSection';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -15,7 +15,69 @@ const Index = () => {
   const { commands, welcomeMessage } = useTerminalCommands();
   const [loading, setLoading] = useState(true);
   const [showTerminal, setShowTerminal] = useState(false);
+  const [matrixSpeed, setMatrixSpeed] = useState(60);
+  const [matrixDensity, setMatrixDensity] = useState(20);
+  const [matrixVisible, setMatrixVisible] = useState(true);
+  const [matrixFullscreen, setMatrixFullscreen] = useState(false);
+  const matrixFullscreenTimer = useRef<NodeJS.Timeout | null>(null);
   const isMobile = useIsMobile();
+
+  // Set up listeners for matrix effect events
+  useEffect(() => {
+    const handleMatrixActivate = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setMatrixVisible(true);
+      
+      if (detail?.fullscreen) {
+        setMatrixFullscreen(true);
+        
+        // If duration is specified, go back to normal after that time
+        if (detail.duration) {
+          if (matrixFullscreenTimer.current) {
+            clearTimeout(matrixFullscreenTimer.current);
+          }
+          
+          matrixFullscreenTimer.current = setTimeout(() => {
+            setMatrixFullscreen(false);
+          }, detail.duration);
+        }
+      }
+    };
+    
+    const handleMatrixSpeed = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.speed) {
+        setMatrixSpeed(detail.speed);
+      }
+    };
+    
+    const handleMatrixDensity = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.density) {
+        setMatrixDensity(detail.density);
+      }
+    };
+    
+    const handleMatrixToggle = () => {
+      setMatrixVisible(prev => !prev);
+    };
+    
+    matrixEffectEvent.addEventListener('matrixActivate', handleMatrixActivate);
+    matrixEffectEvent.addEventListener('matrixSpeed', handleMatrixSpeed);
+    matrixEffectEvent.addEventListener('matrixDensity', handleMatrixDensity);
+    matrixEffectEvent.addEventListener('matrixToggle', handleMatrixToggle);
+    
+    return () => {
+      matrixEffectEvent.removeEventListener('matrixActivate', handleMatrixActivate);
+      matrixEffectEvent.removeEventListener('matrixSpeed', handleMatrixSpeed);
+      matrixEffectEvent.removeEventListener('matrixDensity', handleMatrixDensity);
+      matrixEffectEvent.removeEventListener('matrixToggle', handleMatrixToggle);
+      
+      if (matrixFullscreenTimer.current) {
+        clearTimeout(matrixFullscreenTimer.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Simulate loading time - reduced for faster startup
@@ -65,7 +127,18 @@ const Index = () => {
         <link rel="canonical" href="https://your-portfolio-domain.com" />
       </Helmet>
       
-      <MemoizedMatrixBackground />
+      {matrixVisible && (
+        <div 
+          className={`${matrixFullscreen ? 'fixed inset-0 z-40' : 'fixed inset-0 z-0'}`}
+          style={{ pointerEvents: matrixFullscreen ? 'all' : 'none' }}
+        >
+          <MemoizedMatrixBackground 
+            speed={matrixSpeed} 
+            density={matrixDensity}
+            interactionEnabled={true}
+          />
+        </div>
+      )}
       
       <main className="flex-grow flex items-center justify-center p-4 z-10 relative">
         <AnimatePresence mode="wait">
