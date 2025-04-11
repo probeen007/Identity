@@ -10,6 +10,8 @@ interface WelcomeSectionProps {
 }
 
 const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onOpenTerminal }) => {
+  const currentYear = new Date().getFullYear();
+  
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -63,6 +65,16 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onOpenTerminal }) => {
           <Terminal className="w-5 h-5" />
           Open Terminal
         </Button>
+      </motion.div>
+      
+      {/* Copyright notice */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1, duration: 0.5 }}
+        className="absolute bottom-4 text-terminal-accent/70 text-sm"
+      >
+        © {currentYear} All Rights Reserved
       </motion.div>
     </motion.div>
   );
