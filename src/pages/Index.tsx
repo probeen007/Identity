@@ -1,12 +1,16 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+
+import React, { useState, useEffect, memo } from 'react';
 import Terminal from '@/components/Terminal';
 import MatrixBackground from '@/components/MatrixBackground';
 import useTerminalCommands from '@/hooks/useTerminalCommands';
 import WelcomeSection from '@/components/WelcomeSection';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Helmet } from 'react-helmet';
 
-// Use lazy loading for non-critical components
+// Memoize components to prevent unnecessary re-renders
+const MemoizedMatrixBackground = memo(MatrixBackground);
+
 const Index = () => {
   const { commands, welcomeMessage } = useTerminalCommands();
   const [loading, setLoading] = useState(true);
@@ -14,13 +18,10 @@ const Index = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Add meta tags for SEO
-    document.title = 'Terminal Portfolio | Interactive Developer Resume';
-    
     // Simulate loading time - reduced for faster startup
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 800);
+    }, 500); // Reduced from 800ms for faster startup
 
     return () => clearTimeout(timer);
   }, []);
@@ -50,7 +51,21 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-terminal-background flex flex-col">
-      <MatrixBackground />
+      <Helmet>
+        <title>Terminal Portfolio | Interactive Developer Resume</title>
+        <meta name="description" content="Interactive developer portfolio in a terminal format. Showcasing projects, skills, and experience." />
+        <meta name="keywords" content="developer, portfolio, terminal, interactive, coding, projects, skills" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta property="og:title" content="Terminal Portfolio | Interactive Developer Resume" />
+        <meta property="og:description" content="Check out my interactive terminal-style portfolio showcasing my development skills and projects." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Terminal Portfolio | Interactive Developer Resume" />
+        <meta name="twitter:description" content="Interactive developer portfolio in a terminal format." />
+        <link rel="canonical" href="https://your-portfolio-domain.com" />
+      </Helmet>
+      
+      <MemoizedMatrixBackground />
       
       <main className="flex-grow flex items-center justify-center p-4 z-10 relative">
         <AnimatePresence mode="wait">

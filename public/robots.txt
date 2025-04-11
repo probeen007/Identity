@@ -1,12 +1,12 @@
 
-# Allow all crawlers
+# Allow all search engine crawlers
 User-agent: *
 Allow: /
 
-# Sitemap
+# Sitemap location - update this with your actual domain when deployed
 Sitemap: https://your-domain.com/sitemap.xml
 
-# Specific crawlers
+# Allow specific crawlers with more permission
 User-agent: Googlebot
 Allow: /
 

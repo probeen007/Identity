@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, ExternalLink } from 'lucide-react';
@@ -10,7 +10,8 @@ interface ResumeSettingsProps {
   isVisible: boolean;
 }
 
-const ResumeSettings: React.FC<ResumeSettingsProps> = ({ isVisible }) => {
+// Use memo to prevent unnecessary re-renders
+const ResumeSettings: React.FC<ResumeSettingsProps> = memo(({ isVisible }) => {
   const { resumeUrl, setResumeUrl } = useResumeConfig();
   const [inputUrl, setInputUrl] = useState(resumeUrl);
 
@@ -53,12 +54,21 @@ const ResumeSettings: React.FC<ResumeSettingsProps> = ({ isVisible }) => {
       </div>
       
       <div className="mt-2 text-xs">
-        <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="text-terminal-accent hover:underline flex items-center">
-          <ExternalLink className="w-3 h-3 mr-1" /> Current resume link
-        </a>
+        {resumeUrl && (
+          <a 
+            href={resumeUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-terminal-accent hover:underline flex items-center"
+          >
+            <ExternalLink className="w-3 h-3 mr-1" /> Current resume link
+          </a>
+        )}
       </div>
     </div>
   );
-};
+});
+
+ResumeSettings.displayName = 'ResumeSettings';
 
 export default ResumeSettings;

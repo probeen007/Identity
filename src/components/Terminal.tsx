@@ -20,7 +20,6 @@ interface CommandHistoryItem {
 const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, onClose }) => {
   const [commandHistory, setCommandHistory] = useState<CommandHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -75,8 +74,6 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
       } else if (commandObj) {
         // Execute command handler
         output = await commandObj.handler(args);
-        // Update active section based on command
-        setActiveSection(commandName);
       } else {
         // Command not found
         output = { 
@@ -114,7 +111,7 @@ const Terminal: React.FC<TerminalProps> = ({ welcomeMessage, availableCommands, 
       className={`w-full h-full bg-terminal-background text-terminal-foreground rounded-md overflow-hidden flex flex-col 
                   ${isFullScreen ? 'fixed top-0 left-0 z-50 w-screen h-screen rounded-none' : ''}`}
     >
-      {/* Terminal Header - Fixed at the top */}
+      {/* Terminal Header */}
       <div className="sticky top-0 z-20 p-2 border-b border-terminal-accent/30 font-mono text-sm bg-black/40 backdrop-blur-sm flex justify-between items-center">
         <div className="w-20 flex items-center space-x-2 pl-2">
           <div className="h-3 w-3 rounded-full bg-red-500"></div>

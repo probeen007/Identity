@@ -18,25 +18,28 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isMobile = window.innerWidth <= 768;
 
+  // Focus input on mount for desktop devices
   useEffect(() => {
-    // Focus the input element when the component mounts and when not on mobile
-    if (inputRef.current && window.innerWidth > 768) {
+    if (inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
   }, []);
 
-  // Re-focus on input when clicking anywhere in the terminal area
+  // Re-focus on input when clicking terminal area (desktop only)
   useEffect(() => {
+    if (isMobile) return;
+    
     const handleClick = () => {
-      if (inputRef.current && window.innerWidth > 768) {
+      if (inputRef.current) {
         inputRef.current.focus();
       }
     };
     
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
-  }, []);
+  }, [isMobile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -120,7 +123,7 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
               disabled={isLoading}
               aria-label="Terminal command input"
               autoComplete="off"
-              autoFocus={window.innerWidth > 768}
+              autoFocus={!isMobile}
               style={{ caretColor: 'transparent' }}
             />
             {/* Inline suggestion */}
@@ -142,7 +145,7 @@ const TerminalPrompt: React.FC<TerminalPromptProps> = ({
       </div>
       
       {/* Mobile send button */}
-      {window.innerWidth <= 768 && (
+      {isMobile && (
         <button 
           onClick={() => {
             if (input.trim() && !isLoading) {
