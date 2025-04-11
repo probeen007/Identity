@@ -19,6 +19,7 @@ const Index = () => {
   const [matrixDensity, setMatrixDensity] = useState(20);
   const [matrixVisible, setMatrixVisible] = useState(true);
   const [matrixFullscreen, setMatrixFullscreen] = useState(false);
+  const [hackeryAnimation, setHackeryAnimation] = useState(false);
   const matrixFullscreenTimer = useRef<NodeJS.Timeout | null>(null);
   const isMobile = useIsMobile();
 
@@ -89,11 +90,37 @@ const Index = () => {
   }, []);
 
   const handleOpenTerminal = () => {
-    setShowTerminal(true);
+    // Show hackery animation before terminal
+    setHackeryAnimation(true);
+    
+    // Briefly increase matrix speed for effect
+    setMatrixSpeed(120);
+    setMatrixDensity(40);
+    
+    // Reset matrix settings after animation
+    setTimeout(() => {
+      setMatrixSpeed(60);
+      setMatrixDensity(20);
+      setHackeryAnimation(false);
+      setShowTerminal(true);
+    }, 1500);
   };
 
   const handleCloseTerminal = () => {
-    setShowTerminal(false);
+    // Show closing animation
+    setHackeryAnimation(true);
+    
+    // Slightly different matrix effect for closing
+    setMatrixSpeed(100);
+    setMatrixDensity(30);
+    
+    // Reset and close terminal after animation
+    setTimeout(() => {
+      setMatrixSpeed(60);
+      setMatrixDensity(20);
+      setHackeryAnimation(false);
+      setShowTerminal(false);
+    }, 1200);
   };
 
   if (loading || !welcomeMessage) {
@@ -142,6 +169,33 @@ const Index = () => {
       
       <main className="flex-grow flex items-center justify-center p-4 z-10 relative">
         <AnimatePresence mode="wait">
+          {hackeryAnimation && (
+            <motion.div
+              key="hackery-animation"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 flex items-center justify-center z-30 pointer-events-none"
+            >
+              <div className="hack-animation p-4 w-full max-w-2xl">
+                <div className="overflow-hidden">
+                  {Array.from({ length: 10 }).map((_, index) => (
+                    <div 
+                      key={index} 
+                      className="hack-line monospace text-xs"
+                      style={{ 
+                        animationDelay: `${index * 0.1}s`,
+                        opacity: 0
+                      }}
+                    >
+                      &gt; {showTerminal ? 'Shutting down secure connection...' : 'Establishing secure connection...'} {Array.from({ length: Math.floor(Math.random() * 30) + 10 }).map(() => Math.floor(Math.random() * 2)).join('')}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        
           {!showTerminal ? (
             <WelcomeSection onOpenTerminal={handleOpenTerminal} key="welcome" />
           ) : (
