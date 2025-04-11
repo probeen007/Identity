@@ -66,7 +66,8 @@ const useTerminalCommands = () => {
       currentTheme, 
       setCurrentTheme,
       applyTheme,
-      resumeUrl
+      resumeUrl,
+      navigate // Pass the navigate function to useCommandDefinitions
     );
 
     setCommands(commandsList);

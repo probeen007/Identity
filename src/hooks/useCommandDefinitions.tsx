@@ -1,6 +1,6 @@
 import React from 'react';
 import { Command } from '@/types';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import {
   getAbout,
@@ -16,9 +16,13 @@ import {
 } from '@/services/dataService';
 import { matrixEffectEvent } from './useMatrixEffect';
 
-const useCommandDefinitions = (currentTheme: string, setCurrentTheme: (theme: string) => void, applyTheme: (theme: string) => void, resumeUrl: string) => {
-  const navigate = useNavigate();
-
+const useCommandDefinitions = (
+  currentTheme: string, 
+  setCurrentTheme: (theme: string) => void, 
+  applyTheme: (theme: string) => void, 
+  resumeUrl: string,
+  navigate: NavigateFunction
+) => {
   const commandsList: Command[] = [
     {
       command: 'about',
