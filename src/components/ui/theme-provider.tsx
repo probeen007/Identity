@@ -3,9 +3,14 @@ import * as React from "react";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
-  defaultTheme: string;
-  storageKey: string;
+  defaultTheme?: string;
+  storageKey?: string;
 };
+
+export const ThemeContext = React.createContext<{
+  theme: string;
+  setTheme: (theme: string) => void;
+} | undefined>(undefined);
 
 export function ThemeProvider({
   children,
@@ -41,14 +46,7 @@ export function ThemeProvider({
   );
 }
 
-type ThemeContextType = {
-  theme: string;
-  setTheme: (theme: string) => void;
-};
-
-export const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
-
-export const useTheme = (): ThemeContextType => {
+export const useTheme = () => {
   const context = React.useContext(ThemeContext);
 
   if (context === undefined) {
