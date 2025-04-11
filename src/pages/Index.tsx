@@ -6,7 +6,7 @@ import useTerminalCommands from '@/hooks/useTerminalCommands';
 import WelcomeSection from '@/components/WelcomeSection';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 // Memoize components to prevent unnecessary re-renders
 const MemoizedMatrixBackground = memo(MatrixBackground);
