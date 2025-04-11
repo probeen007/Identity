@@ -1,18 +1,17 @@
-
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Terminal from '@/components/Terminal';
 import MatrixBackground from '@/components/MatrixBackground';
 import useTerminalCommands from '@/hooks/useTerminalCommands';
 import WelcomeSection from '@/components/WelcomeSection';
 import { motion, AnimatePresence } from 'framer-motion';
-import useMobile from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Use lazy loading for non-critical components
 const Index = () => {
   const { commands, welcomeMessage } = useTerminalCommands();
   const [loading, setLoading] = useState(true);
   const [showTerminal, setShowTerminal] = useState(false);
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Add meta tags for SEO
