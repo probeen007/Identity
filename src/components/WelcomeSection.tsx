@@ -17,7 +17,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onOpenTerminal }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="flex flex-col items-center justify-center min-h-[80vh] z-10 relative"
+      className="flex flex-col items-center justify-center min-h-[80vh] z-10 relative w-full"
     >
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}

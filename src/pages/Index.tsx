@@ -1,12 +1,12 @@
 
-import React, { useState, useEffect, memo, useRef } from 'react';
-import Terminal from '@/components/Terminal';
-import MatrixBackground from '@/components/MatrixBackground';
-import useTerminalCommands, { matrixEffectEvent } from '@/hooks/useTerminalCommands';
-import WelcomeSection from '@/components/WelcomeSection';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useIsMobile } from '@/hooks/use-mobile';
+import React, { useState, useEffect, memo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import MatrixBackground from '@/components/MatrixBackground';
+import useTerminalCommands from '@/hooks/useTerminalCommands';
+import { useMatrixEffect } from '@/hooks/useMatrixEffect';
+import TerminalHandler from '@/components/TerminalHandler';
+import PortfolioFooter from '@/components/PortfolioFooter';
+import { motion } from 'framer-motion';
 
 // Memoize components to prevent unnecessary re-renders
 const MemoizedMatrixBackground = memo(MatrixBackground);
@@ -15,70 +15,11 @@ const Index = () => {
   const { commands, welcomeMessage } = useTerminalCommands();
   const [loading, setLoading] = useState(true);
   const [showTerminal, setShowTerminal] = useState(false);
-  const [matrixSpeed, setMatrixSpeed] = useState(60);
-  const [matrixDensity, setMatrixDensity] = useState(20);
-  const [matrixVisible, setMatrixVisible] = useState(true);
-  const [matrixFullscreen, setMatrixFullscreen] = useState(false);
-  const [terminalAnimation, setTerminalAnimation] = useState<'booting' | 'shutting-down' | null>(null);
-  const matrixFullscreenTimer = useRef<NodeJS.Timeout | null>(null);
-  const isMobile = useIsMobile();
-
-  // Set up listeners for matrix effect events
-  useEffect(() => {
-    const handleMatrixActivate = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      setMatrixVisible(true);
-      
-      if (detail?.fullscreen) {
-        setMatrixFullscreen(true);
-        
-        // If duration is specified, go back to normal after that time
-        if (detail.duration) {
-          if (matrixFullscreenTimer.current) {
-            clearTimeout(matrixFullscreenTimer.current);
-          }
-          
-          matrixFullscreenTimer.current = setTimeout(() => {
-            setMatrixFullscreen(false);
-          }, detail.duration);
-        }
-      }
-    };
-    
-    const handleMatrixSpeed = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      if (detail?.speed) {
-        setMatrixSpeed(detail.speed);
-      }
-    };
-    
-    const handleMatrixDensity = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      if (detail?.density) {
-        setMatrixDensity(detail.density);
-      }
-    };
-    
-    const handleMatrixToggle = () => {
-      setMatrixVisible(prev => !prev);
-    };
-    
-    matrixEffectEvent.addEventListener('matrixActivate', handleMatrixActivate);
-    matrixEffectEvent.addEventListener('matrixSpeed', handleMatrixSpeed);
-    matrixEffectEvent.addEventListener('matrixDensity', handleMatrixDensity);
-    matrixEffectEvent.addEventListener('matrixToggle', handleMatrixToggle);
-    
-    return () => {
-      matrixEffectEvent.removeEventListener('matrixActivate', handleMatrixActivate);
-      matrixEffectEvent.removeEventListener('matrixSpeed', handleMatrixSpeed);
-      matrixEffectEvent.removeEventListener('matrixDensity', handleMatrixDensity);
-      matrixEffectEvent.removeEventListener('matrixToggle', handleMatrixToggle);
-      
-      if (matrixFullscreenTimer.current) {
-        clearTimeout(matrixFullscreenTimer.current);
-      }
-    };
-  }, []);
+  const { 
+    matrixSpeed, setMatrixSpeed,
+    matrixDensity, setMatrixDensity,
+    matrixVisible, matrixFullscreen
+  } = useMatrixEffect();
 
   useEffect(() => {
     // Simulate loading time - reduced for faster startup
@@ -90,37 +31,29 @@ const Index = () => {
   }, []);
 
   const handleOpenTerminal = () => {
-    // Show Linux-like terminal boot animation
-    setTerminalAnimation('booting');
-    
     // Subtle matrix effect
     setMatrixSpeed(80);
     setMatrixDensity(25);
     
-    // Show terminal after animation
+    // Show terminal
     setTimeout(() => {
       setMatrixSpeed(60);
       setMatrixDensity(20);
-      setTerminalAnimation(null);
       setShowTerminal(true);
-    }, 2200);
+    }, 200);
   };
 
   const handleCloseTerminal = () => {
-    // Show shutdown animation
-    setTerminalAnimation('shutting-down');
-    
     // Subtle matrix effect for closing
     setMatrixSpeed(70);
     setMatrixDensity(22);
     
-    // Hide terminal after animation
+    // Hide terminal
     setTimeout(() => {
       setMatrixSpeed(60);
       setMatrixDensity(20);
-      setTerminalAnimation(null);
       setShowTerminal(false);
-    }, 1800);
+    }, 200);
   };
 
   if (loading || !welcomeMessage) {
@@ -168,99 +101,16 @@ const Index = () => {
       )}
       
       <main className="flex-grow flex items-center justify-center p-4 z-10 relative">
-        <AnimatePresence mode="wait">
-          {terminalAnimation && (
-            <motion.div
-              key="terminal-animation"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 flex items-center justify-center z-30 pointer-events-none"
-            >
-              <div className="linux-terminal-animation p-4 w-full max-w-2xl">
-                {terminalAnimation === 'booting' ? (
-                  <div className="bg-black/80 p-4 rounded-md font-mono text-xs overflow-hidden">
-                    <div className="linux-boot-sequence overflow-hidden">
-                      {[
-                        { text: "Starting terminal service...", delay: 0 },
-                        { text: "Initializing system resources...", delay: 0.3 },
-                        { text: "Loading user profile...", delay: 0.6 },
-                        { text: "Mounting filesystem...", delay: 0.9 },
-                        { text: "Starting secure shell... ", delay: 1.2 },
-                        { text: "Establishing connection...", delay: 1.5 },
-                        { text: "Connection established. Welcome!", delay: 1.8 }
-                      ].map((item, index) => (
-                        <div 
-                          key={index} 
-                          className="linux-line text-terminal-success"
-                          style={{ 
-                            animationDelay: `${item.delay}s`,
-                            opacity: 0
-                          }}
-                        >
-                          <span className="text-terminal-accent">[OK]</span> {item.text}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-black/80 p-4 rounded-md font-mono text-xs overflow-hidden">
-                    <div className="linux-shutdown-sequence overflow-hidden">
-                      {[
-                        { text: "Saving session state...", delay: 0 },
-                        { text: "Closing active processes...", delay: 0.3 },
-                        { text: "Unmounting filesystem...", delay: 0.6 },
-                        { text: "Stopping secure shell...", delay: 0.9 },
-                        { text: "Disconnecting from server...", delay: 1.2 },
-                        { text: "Connection terminated. Goodbye!", delay: 1.5 }
-                      ].map((item, index) => (
-                        <div 
-                          key={index} 
-                          className="linux-line text-terminal-info"
-                          style={{ 
-                            animationDelay: `${item.delay}s`,
-                            opacity: 0
-                          }}
-                        >
-                          <span className="text-terminal-accent">[SYS]</span> {item.text}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        
-          {!showTerminal ? (
-            <WelcomeSection onOpenTerminal={handleOpenTerminal} key="welcome" />
-          ) : (
-            <motion.div 
-              key="terminal"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className={`w-full ${isMobile ? 'h-[85vh]' : 'max-w-5xl h-[80vh]'} rounded-lg border border-terminal-accent shadow-lg overflow-hidden`}
-            >
-              <Terminal 
-                welcomeMessage={welcomeMessage} 
-                availableCommands={commands} 
-                onClose={handleCloseTerminal}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <TerminalHandler
+          showTerminal={showTerminal}
+          commands={commands}
+          welcomeMessage={welcomeMessage}
+          onCloseTerminal={handleCloseTerminal}
+          onOpenTerminal={handleOpenTerminal}
+        />
       </main>
       
-      <footer className="p-4 text-center text-terminal-accent text-sm z-10 relative mt-auto">
-        <p className="glitch-effect">
-          {showTerminal ? "Type 'help' for available commands" : "Click Open Terminal to begin"}
-        </p>
-        <div className="text-terminal-accent/70 text-sm mt-2">
-          © {new Date().getFullYear()} All Rights Reserved
-        </div>
-      </footer>
+      <PortfolioFooter showTerminal={showTerminal} />
     </div>
   );
 };
