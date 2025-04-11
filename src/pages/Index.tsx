@@ -19,7 +19,7 @@ const Index = () => {
   const [matrixDensity, setMatrixDensity] = useState(20);
   const [matrixVisible, setMatrixVisible] = useState(true);
   const [matrixFullscreen, setMatrixFullscreen] = useState(false);
-  const [hackeryAnimation, setHackeryAnimation] = useState(false);
+  const [terminalAnimation, setTerminalAnimation] = useState<'booting' | 'shutting-down' | null>(null);
   const matrixFullscreenTimer = useRef<NodeJS.Timeout | null>(null);
   const isMobile = useIsMobile();
 
@@ -90,37 +90,37 @@ const Index = () => {
   }, []);
 
   const handleOpenTerminal = () => {
-    // Show hackery animation before terminal
-    setHackeryAnimation(true);
+    // Show Linux-like terminal boot animation
+    setTerminalAnimation('booting');
     
-    // Briefly increase matrix speed for effect
-    setMatrixSpeed(120);
-    setMatrixDensity(40);
+    // Subtle matrix effect
+    setMatrixSpeed(80);
+    setMatrixDensity(25);
     
-    // Reset matrix settings after animation
+    // Show terminal after animation
     setTimeout(() => {
       setMatrixSpeed(60);
       setMatrixDensity(20);
-      setHackeryAnimation(false);
+      setTerminalAnimation(null);
       setShowTerminal(true);
-    }, 1500);
+    }, 2200);
   };
 
   const handleCloseTerminal = () => {
-    // Show closing animation
-    setHackeryAnimation(true);
+    // Show shutdown animation
+    setTerminalAnimation('shutting-down');
     
-    // Slightly different matrix effect for closing
-    setMatrixSpeed(100);
-    setMatrixDensity(30);
+    // Subtle matrix effect for closing
+    setMatrixSpeed(70);
+    setMatrixDensity(22);
     
-    // Reset and close terminal after animation
+    // Hide terminal after animation
     setTimeout(() => {
       setMatrixSpeed(60);
       setMatrixDensity(20);
-      setHackeryAnimation(false);
+      setTerminalAnimation(null);
       setShowTerminal(false);
-    }, 1200);
+    }, 1800);
   };
 
   if (loading || !welcomeMessage) {
@@ -169,29 +169,65 @@ const Index = () => {
       
       <main className="flex-grow flex items-center justify-center p-4 z-10 relative">
         <AnimatePresence mode="wait">
-          {hackeryAnimation && (
+          {terminalAnimation && (
             <motion.div
-              key="hackery-animation"
+              key="terminal-animation"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 flex items-center justify-center z-30 pointer-events-none"
             >
-              <div className="hack-animation p-4 w-full max-w-2xl">
-                <div className="overflow-hidden">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <div 
-                      key={index} 
-                      className="hack-line monospace text-xs"
-                      style={{ 
-                        animationDelay: `${index * 0.1}s`,
-                        opacity: 0
-                      }}
-                    >
-                      &gt; {showTerminal ? 'Shutting down secure connection...' : 'Establishing secure connection...'} {Array.from({ length: Math.floor(Math.random() * 30) + 10 }).map(() => Math.floor(Math.random() * 2)).join('')}
+              <div className="linux-terminal-animation p-4 w-full max-w-2xl">
+                {terminalAnimation === 'booting' ? (
+                  <div className="bg-black/80 p-4 rounded-md font-mono text-xs overflow-hidden">
+                    <div className="linux-boot-sequence overflow-hidden">
+                      {[
+                        { text: "Starting terminal service...", delay: 0 },
+                        { text: "Initializing system resources...", delay: 0.3 },
+                        { text: "Loading user profile...", delay: 0.6 },
+                        { text: "Mounting filesystem...", delay: 0.9 },
+                        { text: "Starting secure shell... ", delay: 1.2 },
+                        { text: "Establishing connection...", delay: 1.5 },
+                        { text: "Connection established. Welcome!", delay: 1.8 }
+                      ].map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="linux-line text-terminal-success"
+                          style={{ 
+                            animationDelay: `${item.delay}s`,
+                            opacity: 0
+                          }}
+                        >
+                          <span className="text-terminal-accent">[OK]</span> {item.text}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="bg-black/80 p-4 rounded-md font-mono text-xs overflow-hidden">
+                    <div className="linux-shutdown-sequence overflow-hidden">
+                      {[
+                        { text: "Saving session state...", delay: 0 },
+                        { text: "Closing active processes...", delay: 0.3 },
+                        { text: "Unmounting filesystem...", delay: 0.6 },
+                        { text: "Stopping secure shell...", delay: 0.9 },
+                        { text: "Disconnecting from server...", delay: 1.2 },
+                        { text: "Connection terminated. Goodbye!", delay: 1.5 }
+                      ].map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="linux-line text-terminal-info"
+                          style={{ 
+                            animationDelay: `${item.delay}s`,
+                            opacity: 0
+                          }}
+                        >
+                          <span className="text-terminal-accent">[SYS]</span> {item.text}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -217,10 +253,13 @@ const Index = () => {
         </AnimatePresence>
       </main>
       
-      <footer className="p-4 text-center text-terminal-accent text-sm z-10 relative">
+      <footer className="p-4 text-center text-terminal-accent text-sm z-10 relative mt-auto">
         <p className="glitch-effect">
           {showTerminal ? "Type 'help' for available commands" : "Click Open Terminal to begin"}
         </p>
+        <div className="text-terminal-accent/70 text-sm mt-2">
+          © {new Date().getFullYear()} All Rights Reserved
+        </div>
       </footer>
     </div>
   );

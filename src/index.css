@@ -172,6 +172,40 @@
     @apply bg-black/30 p-2 my-2 rounded overflow-x-auto;
   }
 
+  /* Linux Terminal Boot Animation */
+  .linux-terminal-animation {
+    @apply overflow-hidden;
+  }
+
+  .linux-boot-sequence, .linux-shutdown-sequence {
+    @apply overflow-hidden rounded-md;
+  }
+
+  .linux-line {
+    opacity: 0;
+    transform: translateY(0);
+    animation: linuxLine 0.6s ease-out forwards;
+    border-left: 2px solid transparent;
+    padding-left: 10px;
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+
+  .linux-line:hover {
+    @apply border-l-terminal-accent bg-black/40;
+  }
+
+  @keyframes linuxLine {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   /* Terminal Matrix Animation */
   .terminal-matrix-animation {
     @apply relative overflow-hidden rounded bg-black;
