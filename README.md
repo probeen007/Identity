@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-  <img src="public/prabin.png" alt="Logo" width="200" height="200"/>
+  <img src="public/prabin.png" alt="Logo" width="400" height="400" style="border-radius: 50%;/>
 </p>
 
 
