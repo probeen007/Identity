@@ -1,8 +1,11 @@
 # 🧑‍💻 Terminal Portfolio - Prabin Bhattarai
 
-> A futuristic, hacker-themed terminal-style developer portfolio built with React ⚛️ and Vite ⚡
+> My futuristic, hacker-themed terminal-style developer portfolio built with React ⚛️ and Vite ⚡
 
 ---
+
+![Logo](/public/logo.png)
+
 
 ## ✨ About
 
