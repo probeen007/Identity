@@ -5,10 +5,10 @@
 ---
 
 <p align="center">
-  <img src="public/prabin.png" alt="Logo" width="400" height="400" style="border-radius: 50%;/>
+  <img src="public/prabin.png" alt="Logo" width="400" height="400" style="border-radius: 50%"/>
 </p>
 
-
+---
 
 ## ✨ About
 
