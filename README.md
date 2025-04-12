@@ -1,73 +1,45 @@
-# Welcome to your Lovable project
+# 🧑‍💻 Terminal Portfolio - Prabin Bhattarai
 
-## Project info
+> A futuristic, hacker-themed terminal-style developer portfolio built with React ⚛️ and Vite ⚡
 
-**URL**: https://lovable.dev/projects/bd6444e5-b8ee-4f77-b258-024488f90973
+---
 
-## How can I edit this code?
+## ✨ About
 
-There are several ways of editing your application.
+👋 Welcome to my interactive terminal-themed portfolio — inspired by the aesthetics of the hacker world, matrix streams, and *just enough sci-fi*. This is not your average resume site — it's a full-on terminal simulation that lets you **type commands**, **explore projects**, **change themes**, and even `hack` the mainframe... 😉
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/bd6444e5-b8ee-4f77-b258-024488f90973) and start prompting.
+## 🧰 Features
 
-Changes made via Lovable will be committed automatically to this repo.
+- ⚙️ Terminal-style CLI interface
+- 🌌 Themes: `light`, `dark`, and `hacker`
+- 📂 Browse projects, experience, skills, certifications
+- 📜 Download resume right from the terminal
+- 🎭 Easter eggs: `matrix`, `hack`, `sudo`, `admin`
+- 🎨 Responsive & animated matrix background
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## ⚡ Available Commands
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/bd6444e5-b8ee-4f77-b258-024488f90973) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```bash
+about            → Display information about me
+projects         → List my projects
+skills           → Show my technical skills
+experience       → Show my work experience
+certificates     → Display my certifications
+recommendations  → Show testimonials from colleagues
+resume           → Download my resume
+contact          → Show contact information
+funfact          → Display a random fun fact
+clear            → Clear the terminal screen
+theme            → Change terminal theme (light | dark | hacker)
+                  Usage: theme light
+sudo             → Run command with admin privileges
+matrix           → Activate interactive matrix mode
+                  Usage: matrix [speed|density|toggle]
+hack             → Hack the mainframe (for fun)
+                  Usage: hack [target]
+admin            → Go to admin dashboard
+help             → Show this help menu
