@@ -13,7 +13,7 @@ interface ResumeConfig {
 const useResumeConfig = (): ResumeConfig => {
   // Get the URL from localStorage or use a default
   const [resumeUrl, setResumeUrlState] = useState<string>(
-    localStorage.getItem('resumeUrl') || 'https://drive.google.com/your-resume-link-here'
+    localStorage.getItem('resumeUrl') || 'https://docs.google.com/document/d/12t-eR2v7yJVQYiiL45JYx5_WG_ugjooze4JXllhZTOs/edit?usp=sharing'
   );
 
   // Update localStorage when the URL changes

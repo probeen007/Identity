@@ -26,7 +26,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onOpenTerminal }) => {
         className="mb-6"
       >
         <Avatar className="h-32 w-32 border-2 border-terminal-accent shadow-lg">
-          <AvatarImage src="/placeholder.svg" alt="Your Name" />
+          <AvatarImage src="/pp.png" alt="Prabin Bhattarai" />
           <AvatarFallback className="bg-terminal-background text-4xl text-terminal-accent">
             YN
           </AvatarFallback>
@@ -39,7 +39,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onOpenTerminal }) => {
         transition={{ delay: 0.5, duration: 0.5 }}
         className="text-4xl sm:text-5xl md:text-6xl font-bold text-terminal-foreground mb-4 glitch-effect text-center"
       >
-        Your Name
+        Prabin Bhattarai
       </motion.h1>
       
       <motion.p 
@@ -48,7 +48,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onOpenTerminal }) => {
         transition={{ delay: 0.7, duration: 0.5 }}
         className="text-lg text-terminal-accent mb-8 max-w-md text-center"
       >
-        Full Stack Developer | Security Expert | Creative Coder
+        Full Stack Developer | AI Developer | Creative Coder
       </motion.p>
       
       <motion.div

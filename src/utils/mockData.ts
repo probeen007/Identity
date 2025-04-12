@@ -3,17 +3,17 @@ import { About, Project, Skill, Experience, Certificate, Recommendation, FunFact
 // Mock About data
 export const mockAbout: About = {
   id: 'about-1', // Added the id property
-  name: 'Jane Doe',
-  title: 'Full Stack Developer & UI/UX Designer',
-  bio: 'Passionate developer with expertise in React, Node.js, and design systems. I love creating elegant solutions to complex problems.',
-  location: 'San Francisco, CA',
-  email: 'jane.doe@example.com',
-  profileImageUrl: '/placeholder.svg',
+  name: 'Prabin Bhattarai',
+  title: 'Full Stack Developer & Ai Developer',
+  bio: 'Passionate developer with expertise in React, Node.js, Ai integrations, Python, and more. I love creating elegant solutions to complex problems.',
+  location: 'Lumbini, Nepal',
+  email: 'pro.victus07@gmail.com',
+  profileImageUrl: '/pp.png',
   socialLinks: {
-    github: 'https://github.com/janedoe',
-    linkedin: 'https://linkedin.com/in/janedoe',
-    twitter: 'https://twitter.com/janedoe',
-    portfolio: 'https://janedoe.dev',
+    github: 'https://github.com/probeen007',
+    linkedin: 'https://www.linkedin.com/in/prabin-bhattarai-78127b257/',
+    twitter: '#',
+    portfolio: 'https://prabin-bhattarai.com.np',
   },
 };
 
@@ -21,29 +21,30 @@ export const mockAbout: About = {
 export const mockProjects: Project[] = [
   {
     id: 'project-1',
-    title: 'Terminal Portfolio',
-    description: 'A personal portfolio website built as a terminal application using React and TypeScript.',
-    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-    githubUrl: 'https://github.com/example/terminal-portfolio',
-    demoUrl: 'https://terminal-portfolio.example.com',
-    imageUrl: '/project1.png',
+    title: 'Mero-Link',
+    description: 'An open source link in bio website builder that allows you to create a professional and customizable link in bio website in minutes.',
+    technologies: ['React', 'aws', 'Tailwind CSS', 'MongoDB', 'Node.js', 'Express'],
+    githubUrl: 'https://github.com/probeen007/Mero-Link',
+    demoUrl: 'https://merolink.me',
+    imageUrl: '/logo.png',
   },
   {
     id: 'project-2',
-    title: 'E-commerce Dashboard',
-    description: 'A comprehensive dashboard for managing an e-commerce platform, including sales analytics and inventory management.',
-    technologies: ['React', 'Node.js', 'Express', 'MongoDB'],
-    githubUrl: 'https://github.com/example/ecommerce-dashboard',
-    demoUrl: 'https://ecommerce-dashboard.example.com',
-    imageUrl: '/project2.png',
+    title: 'Bhattaarai E-commerce',
+    description: 'A dyamic fully e-commerce website with listing products, admin dashboard for managing products, orders, and customers tailored for real offline shop',
+    technologies: ['React', 'Node.js', 'Express', 'MongoDB','firebase'],
+    githubUrl: 'https://github.com/probeen007/Bhattarai-Ecommerce-Nepal',
+    demoUrl: 'https://bhattaraibhada.com.np',
+    imageUrl: '/logo.png',
   },
   {
     id: 'project-3',
-    title: 'Mobile Task Manager',
-    description: 'A mobile application for managing tasks and projects on the go, built with React Native.',
-    technologies: ['React Native', 'Firebase', 'Redux'],
-    githubUrl: 'https://github.com/example/mobile-task-manager',
-    imageUrl: '/project3.png',
+    title: 'Rent Nepal',
+    description: 'A small startup rental webapp for renting rooms and houses in Nepal',
+    technologies: ['React', 'cloudinary', 'Tailwind CSS', 'MongoDB', 'Node.js', 'Express'],
+    githubUrl: 'https://github.com/probeen007/Rent-Nepal',
+    demoUrl: '#',
+    imageUrl: '/logo.png',
   },
 ];
 
@@ -53,7 +54,7 @@ export const mockSkills: Skill[] = [
     id: 'skill-1',
     name: 'React',
     category: 'Frontend',
-    level: 90,
+    level: 80,
   },
   {
     id: 'skill-2',
@@ -63,15 +64,27 @@ export const mockSkills: Skill[] = [
   },
   {
     id: 'skill-3',
-    name: 'UI/UX Design',
-    category: 'Design',
+    name: 'Database: MongoDB,Supabase',
+    category: 'Database',
     level: 75,
   },
   {
     id: 'skill-4',
-    name: 'TypeScript',
+    name: 'Python',
     category: 'Programming',
-    level: 85,
+    level: 75,
+  },
+  {
+    id: 'skill-5',
+    name: 'Ai integrations & Chatbots',
+    category: 'Ai',
+    level: 65,
+  },
+  {
+    id: 'skill-6',
+    name: 'Model Training',
+    category: 'Ai',
+    level: 55,
   },
 ];
 
@@ -79,17 +92,24 @@ export const mockSkills: Skill[] = [
 export const mockExperiences: Experience[] = [
   {
     id: 'exp-1',
-    company: 'Tech Innovations Inc.',
-    position: 'Senior Frontend Developer',
-    duration: '2018 - Present',
-    description: 'Led the development of multiple React-based web applications, focusing on performance optimization and UI/UX improvements.',
+    company: 'Mero-Link',
+    position: 'co-founder',
+    duration: '2020 - Present',
+    description: 'Led the development of the Mero-Link website, a link in bio website builder that allows you to create a professional and customizable link in bio website in minutes.',
   },
   {
     id: 'exp-2',
-    company: 'Global Solutions Ltd.',
-    position: 'UI/UX Designer',
-    duration: '2016 - 2018',
-    description: 'Designed and implemented user interfaces for web and mobile applications, collaborating with developers to ensure seamless integration.',
+    company: 'Nepal Graphics startup',
+    position: 'full stack developer',
+    duration: '2022-2024',
+    description: 'Worked on the development of the Nepal Graphics startup website, a institution for providing graphic design services to clients.',
+  },
+  {
+    id: 'exp-3',
+    company: 'New Horizon school',
+    position: 'Robotics intern',
+    duration: '2022-2024',
+    description: 'Worked on the development of the medical drone ai project with python and open cv',
   },
 ];
 
@@ -97,17 +117,31 @@ export const mockExperiences: Experience[] = [
 export const mockCertificates: Certificate[] = [
   {
     id: 'cert-1',
-    title: 'Certified React Developer',
-    issuer: 'React University',
-    date: '2019',
-    url: 'https://example.com/react-certificate',
+    title: 'Certified Full Stack Engineer',
+    issuer: 'Frontend masters',
+    date: '2024',
+    url: 'https://static.frontendmasters.com/ud/c/ac7f75ba70/pApqiQbIWA/fullstack-v3.pdf',
   },
   {
     id: 'cert-2',
-    title: 'UI/UX Design Professional',
-    issuer: 'Design Institute',
-    date: '2017',
-    url: 'https://example.com/uiux-certificate',
+    title: 'Neural Network & Deep Learning',
+    issuer: 'Frontend masters',
+    date: '2025',
+    url: 'https://static.frontendmasters.com/ud/c/ac7f75ba70/ASgTLkgjgF/hard-parts-ai.pdf',
+  },
+  {
+    id: 'cert-3',
+    title: 'Harvard CS50',
+    issuer: 'Harvard University',
+    date: '2024',
+    url: 'https://certificates.cs50.io/b1823c88-0c96-47e8-aded-ea23c1bb5318.pdf?size=letter',
+  },
+  {
+    id: 'cert-4',
+    title: 'Introduction to llms',
+    issuer: 'Google',
+    date: '2024',
+    url: 'https://www.cloudskillsboost.google/public_profiles/0a9e2f35-a577-4600-86d4-fbb6ea16eed8/badges/6168392?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share',
   },
 ];
 
@@ -115,17 +149,17 @@ export const mockCertificates: Certificate[] = [
 export const mockRecommendations: Recommendation[] = [
   {
     id: 'rec-1',
-    name: 'John Smith',
-    position: 'CTO',
-    company: 'Tech Innovations Inc.',
-    text: 'Jane is a highly skilled developer with a keen eye for design. She consistently delivers high-quality work and is a valuable asset to our team.',
+    name: 'Dipesh Pokhrel',
+    position: 'CEO',
+    company: 'Nepal Graphics',
+    text: 'Prabin is a great developer and a good person. He is always willing to help and is a valuable asset to our team.',
   },
   {
     id: 'rec-2',
-    name: 'Alice Johnson',
-    position: 'Project Manager',
-    company: 'Global Solutions Ltd.',
-    text: 'Jane is a talented UI/UX designer who is always willing to go the extra mile to ensure the success of our projects. Her creativity and attention to detail are truly impressive.',
+    name: 'Ashok aryal',
+    position: 'It Head and Cs Lecturer',
+    company: 'New Horizon school',
+    text: 'Prabin is a curious student and a great developer with out of the box problem solving skills.',
   },
 ];
 
@@ -133,15 +167,19 @@ export const mockRecommendations: Recommendation[] = [
 export const mockFunFacts: FunFact[] = [
   {
     id: 'funfact-1',
-    text: 'I can type over 80 words per minute.',
+    text: 'I can code 10 hours a day without getting bored.',
   },
   {
     id: 'funfact-2',
-    text: 'I have contributed to over 20 open-source projects.',
+    text: 'I cant sleep without learning new things.',
   },
   {
     id: 'funfact-3',
-    text: 'I love hiking and exploring new trails.',
+    text: 'I love to play Cricket and hittng gym.',
+  },
+  {
+    id: 'funfact-4',
+    text: 'Love startups and want to build my own one day.',
   },
 ];
 
