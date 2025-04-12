@@ -4,7 +4,10 @@
 
 ---
 
-![Logo](/public/logo.png)
+<p align="center">
+  <img src="public/prabin.png" alt="Logo"/>
+</p>
+
 
 
 ## ✨ About
