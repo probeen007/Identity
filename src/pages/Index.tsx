@@ -7,6 +7,7 @@ import { useMatrixEffect } from '@/hooks/useMatrixEffect';
 import TerminalHandler from '@/components/TerminalHandler';
 import PortfolioFooter from '@/components/PortfolioFooter';
 import { motion } from 'framer-motion';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Memoize components to prevent unnecessary re-renders
 const MemoizedMatrixBackground = memo(MatrixBackground);
@@ -15,6 +16,7 @@ const Index = () => {
   const { commands, welcomeMessage } = useTerminalCommands();
   const [loading, setLoading] = useState(true);
   const [showTerminal, setShowTerminal] = useState(false);
+  const isMobile = useIsMobile();
   const { 
     matrixSpeed, setMatrixSpeed,
     matrixDensity, setMatrixDensity,
@@ -22,36 +24,62 @@ const Index = () => {
   } = useMatrixEffect();
 
   useEffect(() => {
+    // Set initial viewport height for mobile devices
+    if (isMobile) {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
     // Simulate loading time - reduced for faster startup
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500); // Reduced from 800ms for faster startup
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMobile]);
 
   const handleOpenTerminal = () => {
-    // Subtle matrix effect
-    setMatrixSpeed(80);
-    setMatrixDensity(25);
+    // Adjust matrix effect based on device
+    if (isMobile) {
+      setMatrixSpeed(90);
+      setMatrixDensity(15);
+    } else {
+      setMatrixSpeed(80);
+      setMatrixDensity(25);
+    }
     
     // Show terminal
     setTimeout(() => {
-      setMatrixSpeed(60);
-      setMatrixDensity(20);
+      if (isMobile) {
+        setMatrixSpeed(70);
+        setMatrixDensity(12);
+      } else {
+        setMatrixSpeed(60);
+        setMatrixDensity(20);
+      }
       setShowTerminal(true);
     }, 200);
   };
 
   const handleCloseTerminal = () => {
     // Subtle matrix effect for closing
-    setMatrixSpeed(70);
-    setMatrixDensity(22);
+    if (isMobile) {
+      setMatrixSpeed(80);
+      setMatrixDensity(15);
+    } else {
+      setMatrixSpeed(70);
+      setMatrixDensity(22);
+    }
     
     // Hide terminal
     setTimeout(() => {
-      setMatrixSpeed(60);
-      setMatrixDensity(20);
+      if (isMobile) {
+        setMatrixSpeed(70);
+        setMatrixDensity(12);
+      } else {
+        setMatrixSpeed(60);
+        setMatrixDensity(20);
+      }
       setShowTerminal(false);
     }, 200);
   };
@@ -65,7 +93,7 @@ const Index = () => {
           className="text-terminal-foreground text-xl"
         >
           <span className="inline-block animate-cursor-blink mr-2">▋</span>
-          <span>Initializing Biome...</span>
+          <span>Initializing terminal...</span>
         </motion.div>
       </div>
     );
@@ -74,17 +102,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-terminal-background flex flex-col">
       <Helmet>
-        <title>Terminal Portfolio | Prabin Bhattarai</title>
-        <meta name="description" content="Prabin Bhattarai's Interactive developer portfolio in a terminal format. Showcasing projects, skills, and experience etc." />
-        <meta name="keywords" content="developer, portfolio, terminal, interactive, coding, projects, skills, Prabin Bhattarai" />
+        <title>Terminal Portfolio | Interactive Developer Resume</title>
+        <meta name="description" content="Interactive developer portfolio in a terminal format. Showcasing projects, skills, and experience." />
+        <meta name="keywords" content="developer, portfolio, terminal, interactive, coding, projects, skills" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <meta property="og:title" content="Terminal Portfolio | Prabin Bhattarai" />
-        <meta property="og:description" content="Check out Prabin's interactive terminal-style portfolio showcasing my development skills and projects." />
+        <meta property="og:title" content="Terminal Portfolio | Interactive Developer Resume" />
+        <meta property="og:description" content="Check out my interactive terminal-style portfolio showcasing my development skills and projects." />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Terminal Portfolio | Prabin Bhattarai" />
-        <meta name="twitter:description" content="Prabin Bhattarai's Interactive developer portfolio in a terminal format." />
-        <link rel="canonical" href="https://prabin-bhattarai.com.np" />
+        <meta name="twitter:title" content="Terminal Portfolio | Interactive Developer Resume" />
+        <meta name="twitter:description" content="Interactive developer portfolio in a terminal format." />
+        <link rel="canonical" href="https://your-portfolio-domain.com" />
       </Helmet>
       
       {matrixVisible && (
@@ -94,20 +122,22 @@ const Index = () => {
         >
           <MemoizedMatrixBackground 
             speed={matrixSpeed} 
-            density={matrixDensity}
-            interactionEnabled={true}
+            density={isMobile ? Math.min(matrixDensity, 15) : matrixDensity}
+            interactionEnabled={!isMobile}
           />
         </div>
       )}
       
-      <main className="flex-grow flex items-center justify-center p-4 z-10 relative">
-        <TerminalHandler
-          showTerminal={showTerminal}
-          commands={commands}
-          welcomeMessage={welcomeMessage}
-          onCloseTerminal={handleCloseTerminal}
-          onOpenTerminal={handleOpenTerminal}
-        />
+      <main className="flex-grow flex items-center justify-center p-4 relative">
+        <div className={`z-10 ${showTerminal ? 'w-full h-full' : ''}`}>
+          <TerminalHandler
+            showTerminal={showTerminal}
+            commands={commands}
+            welcomeMessage={welcomeMessage}
+            onCloseTerminal={handleCloseTerminal}
+            onOpenTerminal={handleOpenTerminal}
+          />
+        </div>
       </main>
       
       <PortfolioFooter showTerminal={showTerminal} />

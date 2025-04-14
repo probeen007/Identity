@@ -303,6 +303,56 @@
   .matrix-background.interactive {
     cursor: crosshair;
   }
+  
+  /* Mobile-specific styles */
+  @media (max-width: 640px) {
+    .terminal-prompt {
+      font-size: 0.75rem; /* Smaller font size */
+    }
+    
+    .terminal-command {
+      font-size: 0.8rem; /* Slightly larger than prompt */
+    }
+    
+    .terminal-output-content {
+      font-size: 0.75rem; /* Smaller output text */
+      word-wrap: break-word; /* Ensure long words break */
+      overflow-wrap: break-word; /* Fallback for older browsers */
+      hyphens: auto; /* Enable hyphenation */
+    }
+    
+    /* Adjust terminal height using CSS vars for mobile viewports */
+    .h-terminal-mobile {
+      height: calc(var(--vh, 1vh) * 80);
+    }
+    
+    /* Improve touch targets for mobile */
+    button {
+      min-height: 32px;
+      min-width: 32px;
+    }
+    
+    /* Improve mobile suggestions dropdown */
+    .mobile-suggestions {
+      max-height: 40vh;
+    }
+    
+    /* Fix iOS input zoom */
+    input[type="text"] {
+      font-size: 16px;
+    }
+  }
+
+  /* Prevent horizontal scrolling in terminal */
+  .terminal-output-content {
+    @apply overflow-x-hidden break-words;
+  }
+
+  /* Scrollbar styles to minimize space */
+  .scrollbar-none::-webkit-scrollbar {
+    width: 4px; /* Thin scrollbar */
+    height: 4px;
+  }
 }
 
 /* Table styling for admin panel */
