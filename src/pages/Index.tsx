@@ -102,17 +102,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-terminal-background flex flex-col">
       <Helmet>
-        <title>Terminal Portfolio | Interactive Developer Resume</title>
-        <meta name="description" content="Interactive developer portfolio in a terminal format. Showcasing projects, skills, and experience." />
+        <title>Terminal Portfolio | Prabin Bhattarai</title>
+        <meta name="description" content="Prabin Bhattarai's developer portfolio in a terminal format. Showcasing projects, skills, and experience." />
         <meta name="keywords" content="developer, portfolio, terminal, interactive, coding, projects, skills" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <meta property="og:title" content="Terminal Portfolio | Interactive Developer Resume" />
+        <meta property="og:title" content="Terminal Portfolio | Prabin Bhattarai" />
         <meta property="og:description" content="Check out my interactive terminal-style portfolio showcasing my development skills and projects." />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Terminal Portfolio | Interactive Developer Resume" />
-        <meta name="twitter:description" content="Interactive developer portfolio in a terminal format." />
-        <link rel="canonical" href="https://your-portfolio-domain.com" />
+        <meta name="twitter:title" content="Terminal Portfolio | Prabin Bhattarai" />
+        <meta name="twitter:description" content="Interactive developer portfolio in a terminal format by prabin." />
+        <link rel="canonical" href="https://prabin-bhattarai.com.np" />
       </Helmet>
       
       {matrixVisible && (
